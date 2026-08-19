@@ -17,31 +17,22 @@
       --surface: #ffffff;
       --muted: #6b6b6b;
       --text: #0f1720;
-      --accent: #1f7a2b;      /* main green */
-      --accent-weak: #e6f5ea;
+      --accent: #1f7a2b;
       --accent-dark: #165a20;
-      --danger: #c43a2c;
-      --radius: 12px;
-      --card-radius: 14px;
       --shadow: 0 8px 24px rgba(14, 40, 18, 0.06);
       --soft-shadow: 0 4px 12px rgba(14,40,18,0.04);
-      --gap: 12px;
       --nav-height: 66px;
       --max-width: 640px;
-      --ui-scale: 1; /* small adjustments if needed */
     }
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:"Inter",system-ui,Arial,"Helvetica Neue";-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:var(--text)}
+    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:"Inter",system-ui,Arial,"Helvetica Neue";-webkit-font-smoothing:antialiased;color:var(--text)}
     body{padding-bottom:calc(var(--nav-height) + 18px);display:flex;justify-content:center}
-    .app{width:100%;max-width:var(--max-width);padding:14px;}
+    .app{width:100%;max-width:var(--max-width);padding:14px}
 
 /* Header */
 .header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
 .brand{display:flex;align-items:center;gap:10px}
-.logo{
-  width:48px;height:48px;border-radius:12px;display:grid;place-items:center;
-  background:linear-gradient(180deg,#eaf9ea,#e1f3df);box-shadow:var(--soft-shadow);font-weight:700;color:var(--accent-dark)
-}
+.logo{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(180deg,#eaf9ea,#e1f3df);box-shadow:var(--soft-shadow);font-weight:700;color:var(--accent-dark)}
 .title{font-size:16px;font-weight:700;margin:0}
 .subtitle{font-size:12px;color:var(--muted);margin-top:2px}
 
@@ -50,7 +41,7 @@
 .page.active{display:block}
 
 /* Hero card */
-.hero{background:var(--surface);border-radius:var(--card-radius);padding:12px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:flex-start}
+.hero{background:var(--surface);border-radius:14px;padding:12px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:flex-start}
 .hero-img{width:96px;height:76px;border-radius:10px;object-fit:cover;border:1px solid rgba(0,0,0,0.04)}
 .hero-info h2{margin:0;font-size:15px}
 .hero-info p{margin:8px 0 0 0;color:var(--muted);font-size:13px}
@@ -103,6 +94,8 @@
 }
   </style>
 </head>
+
+
 <body>
   <div class="app" id="app">
     <header class="header" role="banner">
@@ -211,12 +204,13 @@
     </div>
   </div>
 
+
 <script>
 (() => {
   const API_PRODUCTS = "https://zelen-da-backend.onrender.com/products/";
   const API_ORDERS = "https://zelen-da-backend.onrender.com/orders/";
 
-  // Telegram init
+  // Telegram init (безопасно)
   const tg = window.Telegram?.WebApp || null;
   let tgUser = { username: "unknown", id: null };
   let insideTelegram = false;
@@ -235,29 +229,38 @@
   let map = {};
   let cart = JSON.parse(localStorage.getItem('zelen_cart_v4') || '[]');
 
-  // DOM refs
-  const catalog = document.getElementById('catalog');
-  const catalogFull = document.getElementById('catalogFull');
-  const cartList = document.getElementById('cartList');
-  const cartEmpty = document.getElementById('cartEmpty');
-  const totalEl = document.getElementById('total');
-  const badge = document.getElementById('badge');
-  const orderInfo = document.getElementById('orderInfo');
+  // DOM refs (safely)
+  const catalog = document.getElementById('catalog') || null;
+  const catalogFull = document.getElementById('catalogFull') || null;
+  const cartList = document.getElementById('cartList') || null;
+  const cartEmpty = document.getElementById('cartEmpty') || null;
+  const totalEl = document.getElementById('total') || null;
+  const badge = document.getElementById('badge') || null;
+  const orderInfo = document.getElementById('orderInfo') || null;
 
   // navigation
   function show(pageId){
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
+    const el = document.getElementById(pageId);
+    if(el) {
+      el.classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
   }
-  document.getElementById('navHome').addEventListener('click', ()=> show('home'));
-  document.getElementById('navCatalog').addEventListener('click', ()=> show('catalogPage'));
-  document.getElementById('navCart').addEventListener('click', ()=> show('home')); // we keep cart in home for compact flow; user can scroll
+  // safe binding of nav buttons
+  const navHome = document.getElementById('navHome');
+  const navCatalog = document.getElementById('navCatalog');
+  const navCart = document.getElementById('navCart');
+  if(navHome) navHome.addEventListener('click', ()=> show('home'));
+  if(navCatalog) navCatalog.addEventListener('click', ()=> show('catalogPage'));
+  if(navCart) navCart.addEventListener('click', ()=> show('cartPage')); // open cart page
 
-  document.getElementById('btnCatalog').addEventListener('click', ()=> show('catalogPage'));
-  document.getElementById('btnContact').addEventListener('click', ()=> window.open('https://t.me/Zakaz_Mikrozelen','_blank'));
+  const btnCatalog = document.getElementById('btnCatalog');
+  const btnContact = document.getElementById('btnContact');
+  if(btnCatalog) btnCatalog.addEventListener('click', ()=> show('catalogPage'));
+  if(btnContact) btnContact.addEventListener('click', ()=> window.open('https://t.me/Zakaz_Mikrozelen','_blank'));
 
-  // render product card (compact)
+  // render product card (compact) - unchanged
   function productCard(p){
     const wrap = document.createElement('div'); wrap.className='card';
     const img = document.createElement('img'); img.className='thumb'; img.src = p.image || 'https://via.placeholder.com/300x200?text=No+image'; img.alt = p.name;
@@ -287,13 +290,7 @@
     return wrap;
   }
 
-  function renderCatalog(list, container){
-    container.innerHTML = '';
-    if(!list || !list.length){ container.innerHTML = '<div style="color:var(--muted)">Товары не найдены</div>'; return; }
-    list.forEach(p=> container.appendChild(productCard(p)));
-  }
-
-  // cart operations
+  // cart operations (safe)
   function saveCart(){ localStorage.setItem('zelen_cart_v4', JSON.stringify(cart)); renderCart(); updateBadge(); }
   function addToCart(id, qty=1){
     qty = Math.max(1, Math.floor(qty));
@@ -301,6 +298,7 @@
     if(found) found.qty += qty; else cart.push({id,qty});
     saveCart();
   }
+
   function renderCart(){
     // helper to render to a given container set (ids)
     function renderTo(containerId, emptyId, totalId){
@@ -320,7 +318,7 @@
         item.className = 'cart-item';
 
         const img = document.createElement('img');
-        img.className = (containerId === 'cartListPage') ? 'cart-mini' : 'cart-mini';
+        img.className = 'cart-mini';
         img.src = p.image || 'https://via.placeholder.com/200';
 
         const info = document.createElement('div');
@@ -355,14 +353,16 @@
     // render for cart page (if present)
     renderTo('cartListPage', 'cartEmptyPage', 'totalPage');
   }
+
   function updateBadge(){
     const total = cart.reduce((s,i)=>s + i.qty, 0);
-    if(total>0){ badge.style.display='inline-block'; badge.textContent = total; } else badge.style.display='none';
+    if(badge){
+      if(total>0){ badge.style.display='inline-block'; badge.textContent = total; } else badge.style.display='none';
+    }
   }
 
-  // order
+  // order (safe)
   async function placeOrder(){
-    // выбираем поля в приоритете: page inputs, иначе home inputs
     const nameEl = document.getElementById('inputNamePage') || document.getElementById('inputName');
     const phoneEl = document.getElementById('inputPhonePage') || document.getElementById('inputPhone');
     const msgEl = document.getElementById('orderInfoPage') || document.getElementById('orderInfo');
@@ -376,7 +376,6 @@
     const items = cart.map(it=> ({ id: it.id, qty: it.qty, name: map[it.id]?.name || null, price: map[it.id]?.price || null }) );
     const payload = { user_id: tgUser.id, username: tgUser.username, items, name, phone };
 
-    // кнопки (если есть) — блокировка UI
     const btnHome = document.getElementById('btnOrder');
     const btnPage = document.getElementById('btnOrderPage');
     if(btnHome) btnHome.disabled = true;
@@ -410,16 +409,15 @@
     }
   }
 
-  // small toast
   function showToast(text){
     const t = document.createElement('div'); t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.bottom='110px'; t.style.background='rgba(0,0,0,0.8)'; t.style.color='#fff'; t.style.padding='8px 12px'; t.style.borderRadius='12px'; t.style.zIndex=9999; t.textContent = text;
     document.body.appendChild(t); setTimeout(()=> t.remove(),1200);
   }
 
-  // load products
+  // load products (with safe DOM checks)
   async function load(){
-    catalog.innerHTML = '<div style="color:var(--muted)">Загрузка…</div>';
-    catalogFull.innerHTML = '';
+    if(catalog) catalog.innerHTML = '<div style="color:var(--muted)">Загрузка…</div>';
+    if(catalogFull) catalogFull.innerHTML = '';
     try {
       const r = await fetch(API_PRODUCTS);
       if(!r.ok) throw new Error('fetch');
@@ -427,34 +425,51 @@
       products = data;
       map = {}; products.forEach(p=> map[p.id]=p);
       // render popular (first 6)
-      catalog.innerHTML = '';
-      products.slice(0,6).forEach(p=> catalog.appendChild(productCard(p)));
+      if(catalog) {
+        catalog.innerHTML = '';
+        products.slice(0,6).forEach(p=> catalog.appendChild(productCard(p)));
+      }
       // full catalog
-      products.forEach(p=> catalogFull.appendChild(productCard(p)));
+      if(catalogFull) {
+        catalogFull.innerHTML = '';
+        products.forEach(p=> catalogFull.appendChild(productCard(p)));
+      }
       // hero image
-      if(products[0] && products[0].image) document.getElementById('heroImage').src = products[0].image;
+      if(products[0] && products[0].image){
+        const hero = document.getElementById('heroImage');
+        if(hero) hero.src = products[0].image;
+      }
     } catch(e){
-      catalog.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
+      if(catalog) catalog.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
       console.error(e);
     }
     renderCart();
     updateBadge();
   }
 
-  // wire UI
-  document.getElementById('btnOrder').addEventListener('click', placeOrder);
-  document.getElementById('btnClear').addEventListener('click', ()=> { if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Очистили'); }});
-  document.getElementById('navHome').addEventListener('click', ()=> show('home'));
-  document.getElementById('navCatalog').addEventListener('click', ()=> show('catalogPage'));
-  document.getElementById('navCart').addEventListener('click', ()=> { window.scrollTo({top:document.querySelector('.cart-panel').offsetTop - 10, behavior:'smooth'}); });
+  // wire UI buttons safe (home and cart page)
+  const btnOrderHome = document.getElementById('btnOrder');
+  if(btnOrderHome) btnOrderHome.addEventListener('click', placeOrder);
+  const btnClearHome = document.getElementById('btnClear');
+  if(btnClearHome) btnClearHome.addEventListener('click', ()=> { if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Очистили'); }});
+
+  const btnOrderPage = document.getElementById('btnOrderPage');
+  if(btnOrderPage) btnOrderPage.addEventListener('click', placeOrder);
+  const btnClearPage = document.getElementById('btnClearPage');
+  if(btnClearPage) btnClearPage.addEventListener('click', ()=> { if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Очистили'); }});
 
   // startup
   load();
   renderCart();
   updateBadge();
 
-  // expose debugging
-  window.zelen = { cart, products, map, addToCart };
+  // expose debugging helpers
+  window.zelen = {
+    get cart(){ return cart },
+    get products(){ return products },
+    get map(){ return map },
+    addToCart
+  };
 })();
 </script>
 </body>
