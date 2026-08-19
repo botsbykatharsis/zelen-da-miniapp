@@ -109,7 +109,9 @@
       </div>
     </header>
 
-    <!-- HOME -->
+    <!-- ==========================
+         1) HOME (главная + о нас + доставка)
+         ========================== -->
     <main id="home" class="page active" aria-live="polite">
       <section class="hero" aria-label="Акция">
         <img id="heroImage" class="hero-img" src="https://via.placeholder.com/300x200?text=%D0%90%D0%BA%D1%86%D0%B8%D1%8F" alt="Акция">
@@ -123,15 +125,47 @@
         </div>
       </section>
 
+      <!-- About + Delivery -->
+      <section style="margin-top:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:800">О нас</div>
+          <div style="font-size:12px;color:var(--muted)">Микрозелень — свежо и вкусно</div>
+        </div>
+
+        <div style="background:var(--surface);padding:12px;border-radius:12px;margin-top:10px;box-shadow:var(--soft-shadow)">
+          <p style="margin:0 0 8px 0;color:var(--muted)">Мы выращиваем микрозелень в Химках, работаем круглосуточно. Наша задача — привозить свежие листья на ваш стол.</p>
+          <p style="margin:0 0 6px 0"><strong>Менеджер:</strong> <a href="https://t.me/Zakaz_Mikrozelen" target="_blank">@Zakaz_Mikrozelen</a></p>
+          <p style="margin:0 0 6px 0"><strong>Телефон:</strong> <a href="tel:+79014054111">+7 (901) 405-41-11</a></p>
+          <p style="margin:0"><strong>Адрес:</strong> г. Химки, ул. Совхозная, д.14</p>
+        </div>
+
+        <div style="margin-top:12px">
+          <div style="font-weight:800;margin-bottom:8px">Доставка</div>
+          <div style="background:var(--surface);padding:12px;border-radius:12px;box-shadow:var(--soft-shadow)">
+            <p style="margin:0 0 6px 0;color:var(--muted)">Доставляем бесплатно по Левобережному району г. Химки. Подробности и время доставки согласовываются с менеджером.</p>
+            <ul style="margin:6px 0 0 18px;color:var(--muted)">
+              <li>Быстрая курьерская доставка — от 1 часа</li>
+              <li>Самовывоз — после согласования</li>
+              <li>Работаем 24/7</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Popular section (preview from catalog) -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
         <div class="section-title">Популярное</div>
         <div style="font-size:12px;color:var(--muted)">до 10 товаров</div>
       </div>
 
-      <div id="catalog" class="catalog" aria-live="polite"></div>
+      <div id="catalog" class="catalog" aria-live="polite">
+        <!-- popular product cards here (injected by JS) -->
+      </div>
     </main>
 
-    <!-- CATALOG page -->
+    <!-- ==========================
+         2) CATALOG (отдельная страница)
+         ========================== -->
     <section id="catalogPage" class="page" aria-live="polite">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="font-weight:800">Каталог</div>
@@ -140,7 +174,9 @@
       <div id="catalogFull" style="margin-top:10px;display:flex;flex-direction:column;gap:10px"></div>
     </section>
 
-    <!-- CART page -->
+    <!-- ==========================
+         3) CART (корзина + оформление)
+         ========================== -->
     <section id="cartPage" class="page" aria-live="polite">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="font-weight:800">Корзина</div>
@@ -182,20 +218,6 @@
   const API_PRODUCTS = "https://zelen-da-backend.onrender.com/products/";
   const API_ORDERS = "https://zelen-da-backend.onrender.com/orders/";
 
-  // LOCAL_PRODUCTS — запасной локальный список товаров (ID, name, price, image, description)
-  // 0 — акционный сет из 3 культур за 500 руб.
-  const LOCAL_PRODUCTS = [
-    { id: 0, name: "Акция — сет из 3 культур", price: 500, image: "https://via.placeholder.com/300x200?text=%D0%90%D0%BA%D1%86%D0%B8%D1%8F+%D1%81%D0%B5%D1%82", description: "Три пробника разных культур — отличная проба для салатов", is_promo: true },
-    { id: 1, name: "Микрозелень: Горошек", price: 150, image: "https://via.placeholder.com/300x200?text=%D0%93%D0%BE%D1%80%D0%BE%D1%88%D0%B5%D0%BA", description: "Свежая микрозелень гороха — нежно и сладко" },
-    { id: 2, name: "Капуста Брокколи", price: 160, image: "https://via.placeholder.com/300x200?text=%D0%91%D1%80%D0%BE%D0%BA%D0%BA%D0%BE%D0%BB%D0%B8", description: "Хрустящая микрозелень брокколи, богата витамином C" },
-    { id: 3, name: "Капуста Мизуна", price: 140, image: "https://via.placeholder.com/300x200?text=%D0%9C%D0%B8%D0%B7%D1%83%D0%BD%D0%B0", description: "Острая, с лёгкой горчинкой — отлично для гарниров" },
-    { id: 4, name: "Редис красный", price: 120, image: "https://via.placeholder.com/300x200?text=%D0%A0%D0%B5%D0%B4%D0%B8%D1%81", description: "Острая микрозелень редиса — пикантная нота в салате" },
-    { id: 5, name: "Руккола", price: 130, image: "https://via.placeholder.com/300x200?text=%D0%A0%D1%83%D0%BA%D0%BA%D0%BE%D0%BB%D0%B0", description: "Ароматная рукола — классика для салатов" },
-    { id: 6, name: "Дайкон", price: 110, image: "https://via.placeholder.com/300x200?text=%D0%94%D0%B0%D0%B9%D0%BA%D0%BE%D0%BD", description: "Лёгкая пикантность, хрустящая структура" },
-    { id: 7, name: "Мелиса (лимонная)", price: 200, image: "https://via.placeholder.com/300x200?text=%D0%9C%D0%B5%D0%BB%D0%B8%D1%81%D0%B0", description: "Ароматная лимонная мелиса — для чая и салатов" },
-    { id: 8, name: "Базилик фиолетовый", price: 180, image: "https://via.placeholder.com/300x200?text=%D0%91%D0%B0%D0%B7%D0%B8%D0%BB%D0%B8%D0%BA+%D1%84%D0%B8%D0%BE%D0%BB%D0%B5%D1%82%D0%BE%D0%B2%D1%8B%D0%B9", description: "Яркий цвет и насыщенный вкус — для гастрономии" }
-  ];
-
   // Telegram init
   const tg = window.Telegram?.WebApp || null;
   let tgUser = { username: "unknown", id: null };
@@ -215,18 +237,19 @@
   let map = {};
   let cart = JSON.parse(localStorage.getItem('zelen_cart_v4') || '[]');
 
-  // DOM refs
+  // DOM refs (safe)
   const catalog = document.getElementById('catalog');
   const catalogFull = document.getElementById('catalogFull');
   const badge = document.getElementById('badge');
 
-  // Navigation
+  // Navigation helpers
   function show(pageId){
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     const el = document.getElementById(pageId);
     if(el) el.classList.add('active');
     window.scrollTo({top:0,behavior:'smooth'});
   }
+  // bind nav
   const navHome = document.getElementById('navHome');
   const navCatalog = document.getElementById('navCatalog');
   const navCart = document.getElementById('navCart');
@@ -234,7 +257,7 @@
   if(navCatalog) navCatalog.addEventListener('click', ()=> show('catalogPage'));
   if(navCart) navCart.addEventListener('click', ()=> show('cartPage'));
 
-  // Hero buttons
+  // hero buttons
   const btnCatalog = document.getElementById('btnCatalog');
   const btnContact = document.getElementById('btnContact');
   if(btnCatalog) btnCatalog.addEventListener('click', ()=> show('catalogPage'));
@@ -269,7 +292,7 @@
     return wrap;
   }
 
-  // cart operations
+  // cart functions
   function saveCart(){ localStorage.setItem('zelen_cart_v4', JSON.stringify(cart)); renderCart(); updateBadge(); }
   function addToCart(id, qty=1){
     qty = Math.max(1, Math.floor(qty));
@@ -279,7 +302,7 @@
   }
 
   function renderCart(){
-    // render home mini cart
+    // render area in home
     const homeList = document.getElementById('cartList');
     const homeEmpty = document.getElementById('cartEmpty');
     if(homeList && homeEmpty){
@@ -311,7 +334,7 @@
       }
     }
 
-    // render cart page
+    // render area on cart page
     const pageList = document.getElementById('cartListPage');
     const pageEmpty = document.getElementById('cartEmptyPage');
     if(pageList && pageEmpty){
@@ -401,38 +424,34 @@
     document.body.appendChild(t); setTimeout(()=> t.remove(),1200);
   }
 
-  // load products (try API, fallback to LOCAL_PRODUCTS)
+  // load products
   async function load(){
     if(catalog) catalog.innerHTML = '<div style="color:var(--muted)">Загрузка…</div>';
     if(catalogFull) catalogFull.innerHTML = '';
     try{
-      const r = await fetch(API_PRODUCTS, {cache: "no-store"});
+      const r = await fetch(API_PRODUCTS);
       if(!r.ok) throw new Error('fetch');
       const data = await r.json();
-      // if API returns empty, use local
-      if(!data || !data.length){
-        products = LOCAL_PRODUCTS.slice();
-      } else {
-        products = data;
+      products = data;
+      map = {}; products.forEach(p=> map[p.id]=p);
+      // popular (first 6)
+      if(catalog){
+        catalog.innerHTML = '';
+        products.slice(0,6).forEach(p=> catalog.appendChild(productCard(p)));
       }
-    } catch(e){
-      // on any error — use local products
-      products = LOCAL_PRODUCTS.slice();
-    }
-
-    // normalize and render
-    map = {}; products.forEach(p=> map[p.id] = p);
-    if(catalog){
-      catalog.innerHTML = '';
-      products.slice(0,6).forEach(p => catalog.appendChild(productCard(p)));
-    }
-    if(catalogFull){
-      catalogFull.innerHTML = '';
-      products.forEach(p => catalogFull.appendChild(productCard(p)));
-    }
-    if(products[0] && products[0].image){
-      const hero = document.getElementById('heroImage');
-      if(hero) hero.src = products[0].image;
+      // full
+      if(catalogFull){
+        catalogFull.innerHTML = '';
+        products.forEach(p=> catalogFull.appendChild(productCard(p)));
+      }
+      // hero image
+      if(products[0] && products[0].image){
+        const hero = document.getElementById('heroImage');
+        if(hero) hero.src = products[0].image;
+      }
+    }catch(e){
+      if(catalog) catalog.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
+      console.error(e);
     }
     renderCart();
     updateBadge();
@@ -449,12 +468,12 @@
   const btnClearPage = document.getElementById('btnClearPage');
   if(btnClearPage) btnClearPage.addEventListener('click', ()=> { if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Корзина очищена'); }});
 
-  // start
+  // startup
   load();
   renderCart();
   updateBadge();
 
-  // expose for debug
+  // expose for debugging
   window.zelen = { cart, products, map, addToCart };
 })();
 </script>
