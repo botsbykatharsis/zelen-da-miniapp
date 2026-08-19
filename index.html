@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ZelenDa — микрозелень 🌱</title>
+
+  <!-- Google font (легкий, современный) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Telegram webapp -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root{
+      --bg: #fbfcfa;
+      --card: #ffffff;
+      --muted: #6b6b6b;
+      --accent: #2e7d32;        /* зелёный основной */
+      --accent-2: #7b2e2e;      /* глубокий рубиновый — акцент, перекличка с листками */
+      --radius: 12px;
+      --shadow: 0 6px 18px rgba(21,21,21,0.06);
+      --gap: 14px;
+      --max-width: 980px;
+    }
+
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#fbfff8 0%, #f6f8f6 100%);
+      color:#111;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding: 18px 14px 88px; /* leave space for bottom nav */
+      box-sizing:border-box;
+      display:flex; justify-content:center;
+    }
+
+    .app{
+      width:100%;
+      max-width:var(--max-width);
+    }
+
+    header.main {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .brand {
+      display:flex; align-items:center; gap:12px;
+    }
+    .logo {
+      width:46px; height:46px; border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg,#eaf6ea,#e1f3df);
+      box-shadow: 0 4px 10px rgba(30,100,30,0.06);
+      font-weight:700; color:var(--accent-2);
+      border: 1px solid rgba(46,125,50,0.06);
+    }
+    h1 { margin:0; font-size:18px; letter-spacing:-0.2px; }
+    .subtitle { color:var(--muted); font-size:13px; margin-top:4px; }
+
+    /* page container */
+    .page { display:none; }
+    .page.active { display:block; }
+
+    /* hero (Главная) */
+    .hero {
+      display:flex;
+      gap:var(--gap);
+      align-items:flex-start;
+      margin-bottom:var(--gap);
+    }
+    .hero-card {
+      flex:1;
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+    .promo {
+      display:flex; gap:12px; align-items:center;
+    }
+    .promo .thumb {
+      width:110px; height:86px; border-radius:10px; object-fit:cover; flex:0 0 110px;
+      box-shadow: 0 6px 18px rgba(17, 70, 17, 0.06);
+      border:1px solid rgba(0,0,0,0.03);
+    }
+    .promo .meta h3 { margin:0 0 6px 0; font-size:16px; }
+    .promo .meta p { margin:0; color:var(--muted); font-size:13px; }
+
+    .actions { display:flex; gap:10px; margin-top:12px; }
+    .btn { background:var(--accent); color:white; border:none; padding:10px 12px; border-radius:10px; cursor:pointer; font-weight:600; }
+    .btn.secondary { background: transparent; border:1px solid rgba(0,0,0,0.06); color:#222; }
+
+    /* contacts block */
+    .contacts {
+      display:flex; gap:8px; align-items:center; margin-top:12px;
+      font-size:13px; color:var(--muted);
+    }
+    .contacts a { color:inherit; text-decoration:none; font-weight:600; color:var(--accent-2) }
+
+    /* catalog (grid) */
+    .catalog-grid {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media(min-width:900px){
+      .catalog-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .product-card {
+      display:flex; gap:12px; align-items:center;
+      background:var(--card); padding:12px; border-radius:12px; box-shadow:var(--shadow);
+    }
+    .product-card .img { width:96px; height:72px; border-radius:8px; object-fit:cover; flex:0 0 96px; border:1px solid rgba(0,0,0,0.03); }
+    .product-info h4 { margin:0; font-size:16px; }
+    .price { font-weight:700; margin-top:8px; color:#111; }
+    .product-controls { margin-left:auto; display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
+
+    .qty-row { display:flex; gap:8px; align-items:center; }
+    .qty { min-width:38px; text-align:center; padding:6px 8px; border-radius:8px; background:#f1f1ef; }
+
+    .add-btn { background:var(--accent); color:white; padding:8px 12px; border-radius:10px; cursor:pointer; border:none; font-weight:600; }
+
+    /* cart page */
+    .cart-card { background:var(--card); padding:12px; border-radius:12px; box-shadow:var(--shadow); margin-top:12px; }
+    .cart-item { display:flex; gap:12px; align-items:center; padding:8px; border-radius:10px; background: #fff; border:1px solid rgba(0,0,0,0.03) }
+    .cart-item .mini { width:64px; height:48px; object-fit:cover; border-radius:8px; flex:0 0 64px; }
+    .cart-total { display:flex; justify-content:space-between; margin-top:12px; align-items:center; }
+
+    /* bottom nav */
+    .bottom-nav {
+      position:fixed; left:0; right:0; bottom:8px; display:flex; justify-content:center;
+      pointer-events:none;
+    }
+    .nav-inner {
+      width:100%; max-width:var(--max-width); display:flex; gap:8px; justify-content:space-between;
+      pointer-events:auto; padding:8px; box-sizing:border-box;
+      background:transparent;
+    }
+    .nav-btn {
+      background:linear-gradient(180deg, white 0%, #f8fff8 100%);
+      border-radius:14px; padding:10px 14px; box-shadow: 0 8px 20px rgba(20,20,20,0.06); display:flex; gap:10px; align-items:center; border:1px solid rgba(0,0,0,0.04);
+      flex:1; text-align:center; cursor:pointer; font-weight:600;
+    }
+    .nav-btn.active { outline: 2px solid rgba(46,125,50,0.12); }
+
+    /* small helpers */
+    .muted { color:var(--muted); font-size:13px; }
+    .hidden { display:none; }
+
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+
+    <header class="main">
+      <div class="brand">
+        <div class="logo">ZD</div>
+        <div>
+          <h1>Микрозелень — ZelenDa</h1>
+          <div class="subtitle">Свежая микрозелень, доставка по Химкам</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="muted">@ZelenDa_bot</div>
+        <div style="font-size:12px;color:var(--muted)">24/7 • Доставка: Левобережный</div>
+      </div>
+    </header>
+
+    <!-- ========== HOME ========== -->
+    <main id="home" class="page active">
+      <div class="hero-card hero">
+        <div style="flex:1;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div class="muted">Акция</div>
+              <h2 style="margin:6px 0 0 0">Набор «Свежие листья» — скидка 10%</h2>
+              <div class="muted" style="margin-top:8px">Идеально для салатов и смузи — пробник 80 г</div>
+              <div class="actions">
+                <button class="btn" id="toCatalogBtn">Смотреть каталог</button>
+                <button class="btn secondary" id="contactBtn">Связаться</button>
+              </div>
+            </div>
+
+            <img id="heroImg" class="thumb" src="https://via.placeholder.com/300x200?text=Акция" alt="Акция" />
+          </div>
+
+          <div style="margin-top:12px" class="contacts">
+            <div>📍 г. Химки, ул. Совхозная, д14</div>
+            <div>•</div>
+            <div>🚛 Бесплатно по Левобережному</div>
+          </div>
+          <div style="margin-top:10px" class="muted">Менеджер: <a href="https://t.me/Zakaz_Mikrozelen" target="_blank">@Zakaz_Mikrozelen</a></div>
+          <div style="margin-top:8px" class="muted">Телефон: <a href="tel:+79014054111">+7 (901) 405-41-11</a></div>
+        </div>
+      </div>
+
+      <!-- компактный блок каталога (первые 3 товара preview) -->
+      <section style="margin-top:12px">
+        <h3 style="margin:8px 0">Популярное</h3>
+        <div id="popular" class="catalog-grid"></div>
+      </section>
+    </main>
+
+    <!-- ========== CATALOG ========== -->
+    <section id="catalog" class="page">
+      <h3>Каталог</h3>
+      <div id="catalogGrid" class="catalog-grid"></div>
+    </section>
+
+    <!-- ========== CART ========== -->
+    <section id="cartPage" class="page">
+      <h3>Корзина</h3>
+      <div id="cartWrap" class="cart-card">
+        <div id="cartList" style="display:flex; flex-direction:column; gap:10px;">
+          <div class="muted">Корзина пуста</div>
+        </div>
+
+        <div class="cart-total">
+          <div class="muted">Итого</div>
+          <div style="font-weight:800" id="cartTotal">0 ₽</div>
+        </div>
+
+        <div style="margin-top:12px">
+          <input id="checkoutName" type="text" placeholder="Ваше имя" style="margin-bottom:8px"/>
+          <input id="checkoutPhone" type="tel" placeholder="Телефон" />
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:12px">
+          <button id="placeOrderBtn" class="btn" style="flex:1">Оформить заказ</button>
+          <button id="clearCartBtn" class="btn secondary">Очистить</button>
+        </div>
+
+        <div id="orderStatus" class="muted" style="margin-top:8px"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- bottom navigation -->
+  <div class="bottom-nav">
+    <div class="nav-inner">
+      <div id="navHome" class="nav-btn active">🏠 Главная</div>
+      <div id="navCatalog" class="nav-btn">🛍 Каталог</div>
+      <div id="navCart" class="nav-btn">🛒 Корзина <span id="navBadge" style="margin-left:6px;color:var(--accent-2);font-weight:700"></span></div>
+    </div>
+  </div>
+
+<script>
+/* ------------- CONFIG -------------- */
+const API_PRODUCTS = "https://zelen-da-backend.onrender.com/products/";
+const API_ORDERS = "https://zelen-da-backend.onrender.com/orders/";
+
+/* ------------- Telegram init -------------- */
+const tg = window.Telegram?.WebApp;
+let openedInsideTelegram = false;
+let tgUsername = "unknown";
+let tgUserId = null;
+try {
+  if (tg) {
+    openedInsideTelegram = true;
+    tg.expand?.();
+    const user = tg.initDataUnsafe?.user || {};
+    tgUsername = user.username || (user.first_name ? (user.first_name + (user.last_name ? " " + user.last_name : "")) : "unknown");
+    tgUserId = user.id || null;
+  }
+} catch(e){
+  console.warn("tg init:", e);
+}
+
+/* ------------- State -------------- */
+let products = [];
+let productsMap = {};
+let cart = JSON.parse(localStorage.getItem("zelen_cart_v2") || "[]");
+
+/* helpers */
+function saveCart(){ localStorage.setItem("zelen_cart_v2", JSON.stringify(cart)); updateNavBadge(); }
+function calcTotal(){ return cart.reduce((s,it)=>{ const p = productsMap[it.id]; return s + (p ? p.price*it.qty : 0); }, 0); }
+function formatMoney(n){ return n + " ₽"; }
+function updateNavBadge(){ const totalQty = cart.reduce((s,it)=>s+it.qty,0); document.getElementById("navBadge").textContent = totalQty ? ("+" + totalQty) : ""; }
+
+/* ------------- Navigation -------------- */
+const pages = { home:document.getElementById("home"), catalog:document.getElementById("catalog"), cart:document.getElementById("cartPage") };
+function showPage(name){
+  for (const k in pages){ pages[k].classList.remove("active"); document.getElementById("nav"+capitalize(k)).classList.remove("active"); }
+  pages[name].classList.add("active");
+  document.getElementById("nav"+capitalize(name)).classList.add("active");
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+document.getElementById("navHome").addEventListener("click", ()=> showPage("home"));
+document.getElementById("navCatalog").addEventListener("click", ()=> showPage("catalog"));
+document.getElementById("navCart").addEventListener("click", ()=> showPage("cart"));
+
+document.getElementById("toCatalogBtn").addEventListener("click", ()=> showPage("catalog"));
+document.getElementById("contactBtn").addEventListener("click", ()=> {
+  // open chat with manager
+  window.open("https://t.me/Zakaz_Mikrozelen", "_blank");
+});
+
+/* ------------- Render products -------------- */
+const catalogGrid = document.getElementById("catalogGrid");
+const popularGrid = document.getElementById("popular");
+
+function renderCatalog(list, container){
+  container.innerHTML = "";
+  if (!list || list.length === 0){
+    container.innerHTML = '<div class="muted">Товаров нет</div>';
+    return;
+  }
+  list.forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.innerHTML = `
+      <img class="img" src="${escapeHtml(p.image || 'https://via.placeholder.com/300x200?text=No+image')}" alt="${escapeHtml(p.name)}" />
+      <div class="product-info">
+        <h4>${escapeHtml(p.name)}</h4>
+        <div class="muted">${escapeHtml(p.description || '')}</div>
+        <div class="price">${formatMoney(p.price)}</div>
+      </div>
+      <div class="product-controls">
+         <div class="qty-row">
+            <button class="btn secondary" data-action="dec" data-id="${p.id}">−</button>
+            <div class="qty" data-role="qty" data-id="${p.id}">1</div>
+            <button class="btn secondary" data-action="inc" data-id="${p.id}">+</button>
+         </div>
+         <button class="add-btn" data-action="add" data-id="${p.id}">В корзину</button>
+      </div>
+    `;
+    container.appendChild(card);
+
+    // qty logic inside card
+    const qtyDisplay = card.querySelector('[data-role="qty"]');
+    let qty = 1;
+    card.querySelector('[data-action="dec"]').addEventListener('click', ()=> { if (qty>1) qty--; qtyDisplay.textContent = qty; });
+    card.querySelector('[data-action="inc"]').addEventListener('click', ()=> { qty++; qtyDisplay.textContent = qty; });
+    card.querySelector('[data-action="add"]').addEventListener('click', ()=> { addToCart(p.id, qty); qty=1; qtyDisplay.textContent = qty; });
+  });
+}
+
+/* ------------- Cart UI -------------- */
+function renderCart(){
+  const listEl = document.getElementById("cartList");
+  listEl.innerHTML = "";
+  if (!cart || cart.length === 0){
+    listEl.innerHTML = '<div class="muted">Корзина пуста</div>';
+    document.getElementById("cartTotal").textContent = formatMoney(0);
+    return;
+  }
+  cart.forEach(it=>{
+    const p = productsMap[it.id] || {name:"Товар #"+it.id, price:0, image:''};
+    const el = document.createElement("div");
+    el.className = "cart-item";
+    el.innerHTML = `
+      <img class="mini" src="${escapeHtml(p.image || 'https://via.placeholder.com/200')}" />
+      <div style="flex:1">
+        <div style="font-weight:600">${escapeHtml(p.name)}</div>
+        <div class="muted">шт ${it.qty} × ${formatMoney(p.price)}</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end">
+        <div style="display:flex; gap:6px">
+          <button class="btn secondary" data-action="dec" data-id="${it.id}">−</button>
+          <button class="btn secondary" data-action="inc" data-id="${it.id}">+</button>
+        </div>
+        <button class="btn secondary" data-action="remove" data-id="${it.id}">Удалить</button>
+      </div>
+    `;
+    listEl.appendChild(el);
+
+    el.querySelector('[data-action="dec"]').addEventListener('click', ()=> { changeQty(it.id, -1); });
+    el.querySelector('[data-action="inc"]').addEventListener('click', ()=> { changeQty(it.id, +1); });
+    el.querySelector('[data-action="remove"]').addEventListener('click', ()=> { removeFromCart(it.id); });
+  });
+
+  document.getElementById("cartTotal").textContent = formatMoney(calcTotal());
+}
+
+/* cart operations */
+function addToCart(id, qty){
+  qty = Math.max(1, Math.floor(qty));
+  const ex = cart.find(x=>x.id===id);
+  if (ex) ex.qty += qty; else cart.push({id, qty});
+  saveCart(); renderCart(); showPage("cart");
+  showToast("Добавлено в корзину");
+}
+
+function changeQty(id, delta){
+  const it = cart.find(x=>x.id===id);
+  if (!it) return;
+  it.qty += delta;
+  if (it.qty <= 0) cart = cart.filter(x=>x.id!==id);
+  saveCart(); renderCart();
+}
+function removeFromCart(id){ cart = cart.filter(x=>x.id!==id); saveCart(); renderCart(); }
+
+/* clear / place order */
+document.getElementById("clearCartBtn").addEventListener("click", ()=> { cart=[]; saveCart(); renderCart(); showToast("Корзина очищена"); });
+document.getElementById("placeOrderBtn").addEventListener("click", async ()=> { await placeOrder(); });
+
+function showToast(text){
+  // temporary top notice
+  const el = document.createElement('div');
+  el.style.position='fixed'; el.style.left='50%'; el.style.transform='translateX(-50%)'; el.style.bottom='110px';
+  el.style.background='rgba(34,34,34,0.9)'; el.style.color='#fff'; el.style.padding='10px 14px'; el.style.borderRadius='10px';
+  el.style.zIndex=9999; el.style.fontSize='14px';
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(()=> el.remove(),1400);
+}
+
+/* ------------- Orders -------------- */
+async function placeOrder(){
+  const name = document.getElementById("checkoutName").value.trim();
+  const phone = document.getElementById("checkoutPhone").value.trim();
+  if (!name || !phone){
+    alert("Пожалуйста, укажите имя и телефон");
+    return;
+  }
+  if (!cart || cart.length===0) { alert("Корзина пустая"); return; }
+
+  const items = cart.map(it=>{
+    const p = productsMap[it.id] || {};
+    return { id: it.id, qty: it.qty, name: p.name || null, price: p.price || null };
+  });
+
+  const order = {
+    user_id: tgUserId,
+    username: tgUsername || "unknown",
+    items,
+    name, phone
+  };
+
+  // UI lock
+  const btn = document.getElementById("placeOrderBtn");
+  btn.disabled = true; btn.textContent = "Отправка...";
+  try {
+    const res = await fetch(API_ORDERS, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(order) });
+    if (!res.ok) throw new Error("Сервер: " + res.status);
+    const data = await res.json();
+    if (data.status === "ok") {
+      cart = []; saveCart(); renderCart();
+      document.getElementById("checkoutName").value=''; document.getElementById("checkoutPhone").value='';
+      showToast("Заказ оформлен! Спасибо.");
+      // notify Telegram if inside webapp
+      if (openedInsideTelegram && tg) {
+        try { tg.sendData?.(JSON.stringify({ type:'order_placed', order_id: data.order_id || null })); } catch(e){}
+      }
+    } else {
+      throw new Error("Ошибка оформления");
+    }
+  } catch(err){
+    console.error(err);
+    alert("Не удалось отправить заказ. Попробуйте позже.");
+  } finally {
+    btn.disabled = false; btn.textContent = "Оформить заказ";
+  }
+}
+
+/* ------------- Load products from backend -------------- */
+async function loadProducts(){
+  try {
+    const res = await fetch(API_PRODUCTS);
+    if (!res.ok) throw new Error("fetch products " + res.status);
+    products = await res.json();
+    productsMap = {};
+    products.forEach(p=> productsMap[p.id] = p);
+    // render catalog
+    renderCatalog(products, catalogGrid);
+    // popular = first 3
+    renderCatalog(products.slice(0,3), popularGrid);
+    renderCart(); updateNavBadge();
+    // hero image optional: take first product image
+    const hero = document.getElementById("heroImg");
+    if (products[0] && products[0].image) hero.src = products[0].image;
+  } catch(err){
+    console.error(err);
+    document.getElementById("catalogGrid").innerHTML = '<div class="muted">Не удалось загрузить товары.</div>';
+  }
+}
+
+/* ------------- Utils -------------- */
+function escapeHtml(s){ if (s==null) return ''; return String(s).replace(/[&<>"'`]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])); }
+
+/* ------------- Boot -------------- */
+loadProducts();
+updateNavBadge();
+
+/* quick history: if url contains #catalog/#cart open page */
+if (location.hash) {
+  const h = location.hash.replace('#','');
+  if (h === 'catalog') showPage('catalog');
+  if (h === 'cart') showPage('cart');
+}
+
+</script>
+</body>
+</html>
