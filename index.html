@@ -11,7 +11,6 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
-    /* Reset & base */
     :root{
       --bg: #f6f7f3;
       --surface: #ffffff;
@@ -19,9 +18,9 @@
       --text: #0f1720;
       --accent: #1f7a2b;
       --accent-dark: #165a20;
-      --shadow: 0 8px 24px rgba(14, 40, 18, 0.06);
+      --shadow: 0 8px 24px rgba(14,40,18,0.06);
       --soft-shadow: 0 4px 12px rgba(14,40,18,0.04);
-      --nav-height: 66px;
+      --nav-height: 76px;
       --max-width: 640px;
     }
     *{box-sizing:border-box}
@@ -94,8 +93,6 @@
 }
   </style>
 </head>
-
-
 <body>
   <div class="app" id="app">
     <header class="header" role="banner">
@@ -112,7 +109,9 @@
       </div>
     </header>
 
-    <!-- HOME -->
+    <!-- ==========================
+         1) HOME (главная + о нас + доставка)
+         ========================== -->
     <main id="home" class="page active" aria-live="polite">
       <section class="hero" aria-label="Акция">
         <img id="heroImage" class="hero-img" src="https://via.placeholder.com/300x200?text=%D0%90%D0%BA%D1%86%D0%B8%D1%8F" alt="Акция">
@@ -126,39 +125,47 @@
         </div>
       </section>
 
+      <!-- About + Delivery -->
+      <section style="margin-top:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:800">О нас</div>
+          <div style="font-size:12px;color:var(--muted)">Микрозелень — свежо и вкусно</div>
+        </div>
+
+        <div style="background:var(--surface);padding:12px;border-radius:12px;margin-top:10px;box-shadow:var(--soft-shadow)">
+          <p style="margin:0 0 8px 0;color:var(--muted)">Мы выращиваем микрозелень в Химках, работаем круглосуточно. Наша задача — привозить свежие листья на ваш стол.</p>
+          <p style="margin:0 0 6px 0"><strong>Менеджер:</strong> <a href="https://t.me/Zakaz_Mikrozelen" target="_blank">@Zakaz_Mikrozelen</a></p>
+          <p style="margin:0 0 6px 0"><strong>Телефон:</strong> <a href="tel:+79014054111">+7 (901) 405-41-11</a></p>
+          <p style="margin:0"><strong>Адрес:</strong> г. Химки, ул. Совхозная, д.14</p>
+        </div>
+
+        <div style="margin-top:12px">
+          <div style="font-weight:800;margin-bottom:8px">Доставка</div>
+          <div style="background:var(--surface);padding:12px;border-radius:12px;box-shadow:var(--soft-shadow)">
+            <p style="margin:0 0 6px 0;color:var(--muted)">Доставляем бесплатно по Левобережному району г. Химки. Подробности и время доставки согласовываются с менеджером.</p>
+            <ul style="margin:6px 0 0 18px;color:var(--muted)">
+              <li>Быстрая курьерская доставка — от 1 часа</li>
+              <li>Самовывоз — после согласования</li>
+              <li>Работаем 24/7</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Popular section (preview from catalog) -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
         <div class="section-title">Популярное</div>
         <div style="font-size:12px;color:var(--muted)">до 10 товаров</div>
       </div>
 
       <div id="catalog" class="catalog" aria-live="polite">
-        <!-- product cards injected here -->
-      </div>
-
-      <div class="cart-panel" style="margin-top:16px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-weight:800">Корзина</div>
-          <div style="color:var(--muted);font-size:13px">Итого: <span id="total" style="font-weight:800">0 ₽</span></div>
-        </div>
-        <div id="cartArea" style="margin-top:10px">
-          <div class="cart-empty" id="cartEmpty">Корзина пуста</div>
-          <div id="cartList"></div>
-        </div>
-
-        <div style="margin-top:12px">
-          <input id="inputName" class="input" type="text" placeholder="Ваше имя">
-          <input id="inputPhone" class="input" type="tel" placeholder="Телефон (+7...)">
-        </div>
-
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button id="btnOrder" class="btn btn-primary" style="flex:1">Оформить заказ</button>
-          <button id="btnClear" class="btn btn-ghost">Очистить</button>
-        </div>
-        <div id="orderInfo" style="margin-top:8px;color:var(--muted);font-size:13px"></div>
+        <!-- popular product cards here (injected by JS) -->
       </div>
     </main>
 
-    <!-- CATALOG page -->
+    <!-- ==========================
+         2) CATALOG (отдельная страница)
+         ========================== -->
     <section id="catalogPage" class="page" aria-live="polite">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="font-weight:800">Каталог</div>
@@ -167,7 +174,9 @@
       <div id="catalogFull" style="margin-top:10px;display:flex;flex-direction:column;gap:10px"></div>
     </section>
 
-    <!-- CART page (отдельная) -->
+    <!-- ==========================
+         3) CART (корзина + оформление)
+         ========================== -->
     <section id="cartPage" class="page" aria-live="polite">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="font-weight:800">Корзина</div>
@@ -198,19 +207,18 @@
   <!-- bottom nav -->
   <div class="bottom-nav" role="navigation" aria-label="Навигация">
     <div class="nav-inner">
-      <div id="navHome" class="nav-item" aria-label="Главная"> <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="margin-right:6px"><path d="M3 11.5L12 4l9 7.5" stroke="#165A20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Главная</div>
-      <div id="navCatalog" class="nav-item" aria-label="Каталог"> <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="margin-right:6px"><rect x="3.5" y="4.5" width="17" height="15" rx="2" stroke="#165A20" stroke-width="1.4"/></svg>Каталог</div>
-      <div id="navCart" class="nav-item" aria-label="Корзина"> <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="margin-right:6px"><path d="M6 6h15l-1.4 8H8.4L6 6z" stroke="#165A20" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Корзина <span id="badge" class="nav-badge" style="display:none">0</span></div>
+      <div id="navHome" class="nav-item" aria-label="Главная">🏠 Главная</div>
+      <div id="navCatalog" class="nav-item" aria-label="Каталог">📦 Каталог</div>
+      <div id="navCart" class="nav-item" aria-label="Корзина">🛒 Корзина <span id="badge" class="nav-badge" style="display:none">0</span></div>
     </div>
   </div>
-
 
 <script>
 (() => {
   const API_PRODUCTS = "https://zelen-da-backend.onrender.com/products/";
   const API_ORDERS = "https://zelen-da-backend.onrender.com/orders/";
 
-  // Telegram init (безопасно)
+  // Telegram init
   const tg = window.Telegram?.WebApp || null;
   let tgUser = { username: "unknown", id: null };
   let insideTelegram = false;
@@ -229,38 +237,33 @@
   let map = {};
   let cart = JSON.parse(localStorage.getItem('zelen_cart_v4') || '[]');
 
-  // DOM refs (safely)
-  const catalog = document.getElementById('catalog') || null;
-  const catalogFull = document.getElementById('catalogFull') || null;
-  const cartList = document.getElementById('cartList') || null;
-  const cartEmpty = document.getElementById('cartEmpty') || null;
-  const totalEl = document.getElementById('total') || null;
-  const badge = document.getElementById('badge') || null;
-  const orderInfo = document.getElementById('orderInfo') || null;
+  // DOM refs (safe)
+  const catalog = document.getElementById('catalog');
+  const catalogFull = document.getElementById('catalogFull');
+  const badge = document.getElementById('badge');
 
-  // navigation
+  // Navigation helpers
   function show(pageId){
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     const el = document.getElementById(pageId);
-    if(el) {
-      el.classList.add('active');
-      window.scrollTo({top:0,behavior:'smooth'});
-    }
+    if(el) el.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
   }
-  // safe binding of nav buttons
+  // bind nav
   const navHome = document.getElementById('navHome');
   const navCatalog = document.getElementById('navCatalog');
   const navCart = document.getElementById('navCart');
   if(navHome) navHome.addEventListener('click', ()=> show('home'));
   if(navCatalog) navCatalog.addEventListener('click', ()=> show('catalogPage'));
-  if(navCart) navCart.addEventListener('click', ()=> show('cartPage')); // open cart page
+  if(navCart) navCart.addEventListener('click', ()=> show('cartPage'));
 
+  // hero buttons
   const btnCatalog = document.getElementById('btnCatalog');
   const btnContact = document.getElementById('btnContact');
   if(btnCatalog) btnCatalog.addEventListener('click', ()=> show('catalogPage'));
   if(btnContact) btnContact.addEventListener('click', ()=> window.open('https://t.me/Zakaz_Mikrozelen','_blank'));
 
-  // render product card (compact) - unchanged
+  // create product card
   function productCard(p){
     const wrap = document.createElement('div'); wrap.className='card';
     const img = document.createElement('img'); img.className='thumb'; img.src = p.image || 'https://via.placeholder.com/300x200?text=No+image'; img.alt = p.name;
@@ -270,7 +273,6 @@
     const row = document.createElement('div'); row.className='row';
 
     const price = document.createElement('div'); price.className='price'; price.textContent = (p.price || 0) + ' ₽';
-    // controls
     const controls = document.createElement('div'); controls.className='controls';
     const dec = document.createElement('button'); dec.className='icon-btn'; dec.textContent='−';
     const qty = document.createElement('div'); qty.className='qty'; qty.textContent='1';
@@ -280,7 +282,7 @@
     let q = 1;
     dec.addEventListener('click', ()=> { if(q>1) q--; qty.textContent = q; });
     inc.addEventListener('click', ()=> { q++; qty.textContent = q; });
-    add.addEventListener('click', ()=> { addToCart(p.id, q); q = 1; qty.textContent = '1'; showToast('Добавлено'); });
+    add.addEventListener('click', ()=> { addToCart(p.id, q); q = 1; qty.textContent = '1'; showToast('Добавлено в корзину'); });
 
     controls.appendChild(dec); controls.appendChild(qty); controls.appendChild(inc);
     row.appendChild(price); row.appendChild(controls); row.appendChild(add);
@@ -290,7 +292,7 @@
     return wrap;
   }
 
-  // cart operations (safe)
+  // cart functions
   function saveCart(){ localStorage.setItem('zelen_cart_v4', JSON.stringify(cart)); renderCart(); updateBadge(); }
   function addToCart(id, qty=1){
     qty = Math.max(1, Math.floor(qty));
@@ -300,112 +302,120 @@
   }
 
   function renderCart(){
-    // helper to render to a given container set (ids)
-    function renderTo(containerId, emptyId, totalId){
-      const container = document.getElementById(containerId);
-      const emptyEl = document.getElementById(emptyId);
-      if(!container || !emptyEl) return;
-      container.innerHTML = '';
-      if(!cart || cart.length === 0){
-        emptyEl.style.display = 'block';
-        if(document.getElementById(totalId)) document.getElementById(totalId).textContent = '0 ₽';
-        return;
+    // render area in home
+    const homeList = document.getElementById('cartList');
+    const homeEmpty = document.getElementById('cartEmpty');
+    if(homeList && homeEmpty){
+      homeList.innerHTML = '';
+      if(!cart.length){ homeEmpty.style.display='block'; if(document.getElementById('total')) document.getElementById('total').textContent = '0 ₽'; }
+      else{
+        homeEmpty.style.display='none';
+        cart.forEach(item => {
+          const p = map[item.id] || {name:'Товар', price:0, image:''};
+          const el = document.createElement('div'); el.className='cart-item';
+          const img = document.createElement('img'); img.className='cart-mini'; img.src = p.image || 'https://via.placeholder.com/200';
+          const meta = document.createElement('div'); meta.className='cart-meta';
+          const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = p.name;
+          const sub = document.createElement('div'); sub.style.color = 'var(--muted)'; sub.textContent = `${item.qty} × ${p.price} ₽`;
+          meta.appendChild(title); meta.appendChild(sub);
+          const actions = document.createElement('div'); actions.className='cart-actions';
+          const plus = document.createElement('button'); plus.className='icon-btn'; plus.textContent='+';
+          const minus = document.createElement('button'); minus.className='icon-btn'; minus.textContent='−';
+          const rm = document.createElement('button'); rm.className='icon-btn'; rm.textContent='✕';
+          plus.addEventListener('click', ()=> { item.qty++; saveCart(); });
+          minus.addEventListener('click', ()=> { item.qty--; if(item.qty<=0) cart = cart.filter(x=>x.id!==item.id); saveCart(); });
+          rm.addEventListener('click', ()=> { cart = cart.filter(x=>x.id!==item.id); saveCart(); });
+          actions.appendChild(plus); actions.appendChild(minus); actions.appendChild(rm);
+          el.appendChild(img); el.appendChild(meta); el.appendChild(actions);
+          homeList.appendChild(el);
+        });
+        const sum = cart.reduce((s,i)=> s + ((map[i.id]?.price||0)*i.qty), 0);
+        if(document.getElementById('total')) document.getElementById('total').textContent = sum + ' ₽';
       }
-      emptyEl.style.display = 'none';
-      cart.forEach(it => {
-        const p = map[it.id] || { name: 'Товар', price:0, image:'' };
-        const item = document.createElement('div');
-        item.className = 'cart-item';
-
-        const img = document.createElement('img');
-        img.className = 'cart-mini';
-        img.src = p.image || 'https://via.placeholder.com/200';
-
-        const info = document.createElement('div');
-        info.className = 'cart-meta';
-        const title = document.createElement('div'); title.style.fontWeight = '700'; title.textContent = p.name;
-        const subtitle = document.createElement('div'); subtitle.style.color = 'var(--muted)'; subtitle.textContent = `${it.qty} × ${p.price} ₽`;
-        info.appendChild(title); info.appendChild(subtitle);
-
-        const actions = document.createElement('div');
-        actions.className = 'cart-actions';
-        const inc = document.createElement('button'); inc.className = 'icon-btn'; inc.textContent = '+';
-        const dec = document.createElement('button'); dec.className = 'icon-btn'; dec.textContent = '−';
-        const rm = document.createElement('button'); rm.className = 'icon-btn'; rm.textContent = '✕';
-
-        inc.addEventListener('click', ()=> { it.qty++; saveCart(); });
-        dec.addEventListener('click', ()=> { it.qty--; if(it.qty<=0) cart = cart.filter(x=>x.id!==it.id); saveCart(); });
-        rm.addEventListener('click', ()=> { cart = cart.filter(x=>x.id!==it.id); saveCart(); });
-
-        actions.appendChild(inc); actions.appendChild(dec); actions.appendChild(rm);
-
-        item.appendChild(img); item.appendChild(info); item.appendChild(actions);
-        container.appendChild(item);
-      });
-
-      const sum = cart.reduce((s,it)=> s + ((map[it.id] ? map[it.id].price : 0) * it.qty), 0);
-      if(document.getElementById(totalId)) document.getElementById(totalId).textContent = sum + ' ₽';
     }
 
-    // render for home area (if present)
-    renderTo('cartList', 'cartEmpty', 'total');
-
-    // render for cart page (if present)
-    renderTo('cartListPage', 'cartEmptyPage', 'totalPage');
+    // render area on cart page
+    const pageList = document.getElementById('cartListPage');
+    const pageEmpty = document.getElementById('cartEmptyPage');
+    if(pageList && pageEmpty){
+      pageList.innerHTML = '';
+      if(!cart.length){ pageEmpty.style.display='block'; if(document.getElementById('totalPage')) document.getElementById('totalPage').textContent = '0 ₽'; }
+      else{
+        pageEmpty.style.display='none';
+        cart.forEach(item => {
+          const p = map[item.id] || {name:'Товар', price:0, image:''};
+          const el = document.createElement('div'); el.className='cart-item';
+          const img = document.createElement('img'); img.className='cart-mini'; img.src = p.image || 'https://via.placeholder.com/200';
+          const meta = document.createElement('div'); meta.className='cart-meta';
+          const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = p.name;
+          const sub = document.createElement('div'); sub.style.color = 'var(--muted)'; sub.textContent = `${item.qty} × ${p.price} ₽`;
+          meta.appendChild(title); meta.appendChild(sub);
+          const actions = document.createElement('div'); actions.className='cart-actions';
+          const plus = document.createElement('button'); plus.className='icon-btn'; plus.textContent='+';
+          const minus = document.createElement('button'); minus.className='icon-btn'; minus.textContent='−';
+          const rm = document.createElement('button'); rm.className='icon-btn'; rm.textContent='✕';
+          plus.addEventListener('click', ()=> { item.qty++; saveCart(); });
+          minus.addEventListener('click', ()=> { item.qty--; if(item.qty<=0) cart = cart.filter(x=>x.id!==item.id); saveCart(); });
+          rm.addEventListener('click', ()=> { cart = cart.filter(x=>x.id!==item.id); saveCart(); });
+          actions.appendChild(plus); actions.appendChild(minus); actions.appendChild(rm);
+          el.appendChild(img); el.appendChild(meta); el.appendChild(actions);
+          pageList.appendChild(el);
+        });
+        const sum = cart.reduce((s,i)=> s + ((map[i.id]?.price||0)*i.qty), 0);
+        if(document.getElementById('totalPage')) document.getElementById('totalPage').textContent = sum + ' ₽';
+      }
+    }
   }
 
   function updateBadge(){
-    const total = cart.reduce((s,i)=>s + i.qty, 0);
+    const total = cart.reduce((s,i)=> s + i.qty, 0);
     if(badge){
       if(total>0){ badge.style.display='inline-block'; badge.textContent = total; } else badge.style.display='none';
     }
   }
 
-  // order (safe)
+  // order
   async function placeOrder(){
     const nameEl = document.getElementById('inputNamePage') || document.getElementById('inputName');
     const phoneEl = document.getElementById('inputPhonePage') || document.getElementById('inputPhone');
-    const msgEl = document.getElementById('orderInfoPage') || document.getElementById('orderInfo');
+    const infoEl = document.getElementById('orderInfoPage') || document.getElementById('orderInfo');
 
     const name = nameEl ? nameEl.value.trim() : '';
     const phone = phoneEl ? phoneEl.value.trim() : '';
 
-    if (!name || !phone){ alert('Укажите имя и телефон'); return; }
-    if (!cart || cart.length === 0){ alert('Корзина пуста'); return; }
+    if(!name || !phone){ alert('Укажите имя и телефон'); return; }
+    if(!cart.length){ alert('Корзина пуста'); return; }
 
-    const items = cart.map(it=> ({ id: it.id, qty: it.qty, name: map[it.id]?.name || null, price: map[it.id]?.price || null }) );
+    const items = cart.map(i=> ({ id:i.id, qty:i.qty, name: map[i.id]?.name || null, price: map[i.id]?.price || null }) );
     const payload = { user_id: tgUser.id, username: tgUser.username, items, name, phone };
 
     const btnHome = document.getElementById('btnOrder');
     const btnPage = document.getElementById('btnOrderPage');
     if(btnHome) btnHome.disabled = true;
     if(btnPage) btnPage.disabled = true;
-
-    const prevTextHome = btnHome ? btnHome.textContent : null;
-    const prevTextPage = btnPage ? btnPage.textContent : null;
+    const prev1 = btnHome ? btnHome.textContent : null;
+    const prev2 = btnPage ? btnPage.textContent : null;
     if(btnHome) btnHome.textContent = 'Отправка...';
     if(btnPage) btnPage.textContent = 'Отправка...';
 
-    try {
+    try{
       const res = await fetch(API_ORDERS, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error('network error ' + res.status);
+      if(!res.ok) throw new Error('network');
       const data = await res.json();
-      if (data.status === 'ok') {
+      if(data.status === 'ok'){
         cart = []; saveCart();
-        if (msgEl) msgEl.textContent = 'Заказ принят. Спасибо!';
-        showToast('Заказ принят');
-        if (insideTelegram && tg) {
-          try { tg.sendData(JSON.stringify({ type:'order_placed', order_id:data.order_id || null })); } catch(e){}
-        }
+        if(infoEl) infoEl.textContent = 'Заказ принят. Спасибо!';
+        showToast('Заказ оформлен');
+        if(insideTelegram && tg) { try { tg.sendData(JSON.stringify({type:'order_placed', order_id: data.order_id || null})); } catch(e){} }
       } else {
-        throw new Error('server error');
+        throw new Error('server');
       }
     } catch(e){
       console.error(e);
-      alert('Не удалось отправить заказ — попробуйте позже');
+      alert('Ошибка отправки заказа — попробуйте позже');
     } finally {
-      if(btnHome){ btnHome.disabled = false; btnHome.textContent = prevTextHome || 'Оформить'; }
-      if(btnPage){ btnPage.disabled = false; btnPage.textContent = prevTextPage || 'Оформить заказ'; }
+      if(btnHome){ btnHome.disabled = false; btnHome.textContent = prev1 || 'Оформить заказ'; }
+      if(btnPage){ btnPage.disabled = false; btnPage.textContent = prev2 || 'Оформить заказ'; }
     }
   }
 
@@ -414,23 +424,23 @@
     document.body.appendChild(t); setTimeout(()=> t.remove(),1200);
   }
 
-  // load products (with safe DOM checks)
+  // load products
   async function load(){
     if(catalog) catalog.innerHTML = '<div style="color:var(--muted)">Загрузка…</div>';
     if(catalogFull) catalogFull.innerHTML = '';
-    try {
+    try{
       const r = await fetch(API_PRODUCTS);
       if(!r.ok) throw new Error('fetch');
       const data = await r.json();
       products = data;
       map = {}; products.forEach(p=> map[p.id]=p);
-      // render popular (first 6)
-      if(catalog) {
+      // popular (first 6)
+      if(catalog){
         catalog.innerHTML = '';
         products.slice(0,6).forEach(p=> catalog.appendChild(productCard(p)));
       }
-      // full catalog
-      if(catalogFull) {
+      // full
+      if(catalogFull){
         catalogFull.innerHTML = '';
         products.forEach(p=> catalogFull.appendChild(productCard(p)));
       }
@@ -439,7 +449,7 @@
         const hero = document.getElementById('heroImage');
         if(hero) hero.src = products[0].image;
       }
-    } catch(e){
+    }catch(e){
       if(catalog) catalog.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
       console.error(e);
     }
@@ -447,29 +457,24 @@
     updateBadge();
   }
 
-  // wire UI buttons safe (home and cart page)
+  // wire UI safe
   const btnOrderHome = document.getElementById('btnOrder');
   if(btnOrderHome) btnOrderHome.addEventListener('click', placeOrder);
   const btnClearHome = document.getElementById('btnClear');
-  if(btnClearHome) btnClearHome.addEventListener('click', ()=> { if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Очистили'); }});
+  if(btnClearHome) btnClearHome.addEventListener('click', ()=> { if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Корзина очищена'); }});
 
   const btnOrderPage = document.getElementById('btnOrderPage');
   if(btnOrderPage) btnOrderPage.addEventListener('click', placeOrder);
   const btnClearPage = document.getElementById('btnClearPage');
-  if(btnClearPage) btnClearPage.addEventListener('click', ()=> { if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Очистили'); }});
+  if(btnClearPage) btnClearPage.addEventListener('click', ()=> { if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Корзина очищена'); }});
 
   // startup
   load();
   renderCart();
   updateBadge();
 
-  // expose debugging helpers
-  window.zelen = {
-    get cart(){ return cart },
-    get products(){ return products },
-    get map(){ return map },
-    addToCart
-  };
+  // expose for debugging
+  window.zelen = { cart, products, map, addToCart };
 })();
 </script>
 </body>
