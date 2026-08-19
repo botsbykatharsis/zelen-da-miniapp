@@ -174,6 +174,32 @@
       <div id="catalogFull" style="margin-top:10px;display:flex;flex-direction:column;gap:10px"></div>
     </section>
 
+    <!-- CART page (отдельная) -->
+    <section id="cartPage" class="page" aria-live="polite">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800">Корзина</div>
+        <div style="color:var(--muted);font-size:13px">Итого: <span id="totalPage" style="font-weight:800">0 ₽</span></div>
+      </div>
+
+      <div class="cart-panel" style="margin-top:12px">
+        <div id="cartAreaPage">
+          <div class="cart-empty" id="cartEmptyPage">Корзина пуста</div>
+          <div id="cartListPage"></div>
+        </div>
+
+        <div style="margin-top:12px">
+          <input id="inputNamePage" class="input" type="text" placeholder="Ваше имя">
+          <input id="inputPhonePage" class="input" type="tel" placeholder="Телефон (+7...)">
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button id="btnOrderPage" class="btn btn-primary" style="flex:1">Оформить заказ</button>
+          <button id="btnClearPage" class="btn btn-ghost">Очистить</button>
+        </div>
+        <div id="orderInfoPage" style="margin-top:8px;color:var(--muted);font-size:13px"></div>
+      </div>
+    </section>
+
   </div>
 
   <!-- bottom nav -->
@@ -276,35 +302,58 @@
     saveCart();
   }
   function renderCart(){
-    cartList.innerHTML = '';
-    if(!cart.length){ cartEmpty.style.display='block'; totalEl.textContent = '0 ₽'; return; }
-    cartEmpty.style.display='none';
-    let sum = 0;
-    cart.forEach(item=>{
-      const p = map[item.id] || { name: 'Товар', price:0, image:'' };
-      const el = document.createElement('div'); el.className='cart-item';
-      const img = document.createElement('img'); img.className='cart-mini'; img.src = p.image || 'https://via.placeholder.com/200';
-      const meta = document.createElement('div'); meta.className='cart-meta';
-      const n = document.createElement('div'); n.style.fontWeight='700'; n.textContent = p.name;
-      const s = document.createElement('div'); s.style.color='var(--muted)'; s.textContent = `${item.qty} × ${p.price} ₽`;
-      meta.appendChild(n); meta.appendChild(s);
+    // helper to render to a given container set (ids)
+    function renderTo(containerId, emptyId, totalId){
+      const container = document.getElementById(containerId);
+      const emptyEl = document.getElementById(emptyId);
+      if(!container || !emptyEl) return;
+      container.innerHTML = '';
+      if(!cart || cart.length === 0){
+        emptyEl.style.display = 'block';
+        if(document.getElementById(totalId)) document.getElementById(totalId).textContent = '0 ₽';
+        return;
+      }
+      emptyEl.style.display = 'none';
+      cart.forEach(it => {
+        const p = map[it.id] || { name: 'Товар', price:0, image:'' };
+        const item = document.createElement('div');
+        item.className = 'cart-item';
 
-      const actions = document.createElement('div'); actions.className='cart-actions';
-      const plus = document.createElement('button'); plus.className='icon-btn'; plus.textContent='+';
-      const minus = document.createElement('button'); minus.className='icon-btn'; minus.textContent='−';
-      const remove = document.createElement('button'); remove.className='icon-btn'; remove.textContent='✕';
+        const img = document.createElement('img');
+        img.className = (containerId === 'cartListPage') ? 'cart-mini' : 'cart-mini';
+        img.src = p.image || 'https://via.placeholder.com/200';
 
-      plus.addEventListener('click', ()=> { item.qty++; saveCart(); });
-      minus.addEventListener('click', ()=> { item.qty--; if(item.qty<=0) cart = cart.filter(x=>x.id!==item.id); saveCart(); });
-      remove.addEventListener('click', ()=> { cart = cart.filter(x=>x.id!==item.id); saveCart(); });
+        const info = document.createElement('div');
+        info.className = 'cart-meta';
+        const title = document.createElement('div'); title.style.fontWeight = '700'; title.textContent = p.name;
+        const subtitle = document.createElement('div'); subtitle.style.color = 'var(--muted)'; subtitle.textContent = `${it.qty} × ${p.price} ₽`;
+        info.appendChild(title); info.appendChild(subtitle);
 
-      actions.appendChild(plus); actions.appendChild(minus); actions.appendChild(remove);
+        const actions = document.createElement('div');
+        actions.className = 'cart-actions';
+        const inc = document.createElement('button'); inc.className = 'icon-btn'; inc.textContent = '+';
+        const dec = document.createElement('button'); dec.className = 'icon-btn'; dec.textContent = '−';
+        const rm = document.createElement('button'); rm.className = 'icon-btn'; rm.textContent = '✕';
 
-      el.appendChild(img); el.appendChild(meta); el.appendChild(actions);
-      cartList.appendChild(el);
-      sum += (p.price || 0) * item.qty;
-    });
-    totalEl.textContent = sum + ' ₽';
+        inc.addEventListener('click', ()=> { it.qty++; saveCart(); });
+        dec.addEventListener('click', ()=> { it.qty--; if(it.qty<=0) cart = cart.filter(x=>x.id!==it.id); saveCart(); });
+        rm.addEventListener('click', ()=> { cart = cart.filter(x=>x.id!==it.id); saveCart(); });
+
+        actions.appendChild(inc); actions.appendChild(dec); actions.appendChild(rm);
+
+        item.appendChild(img); item.appendChild(info); item.appendChild(actions);
+        container.appendChild(item);
+      });
+
+      const sum = cart.reduce((s,it)=> s + ((map[it.id] ? map[it.id].price : 0) * it.qty), 0);
+      if(document.getElementById(totalId)) document.getElementById(totalId).textContent = sum + ' ₽';
+    }
+
+    // render for home area (if present)
+    renderTo('cartList', 'cartEmpty', 'total');
+
+    // render for cart page (if present)
+    renderTo('cartListPage', 'cartEmptyPage', 'totalPage');
   }
   function updateBadge(){
     const total = cart.reduce((s,i)=>s + i.qty, 0);
@@ -313,33 +362,51 @@
 
   // order
   async function placeOrder(){
-    const name = document.getElementById('inputName').value.trim();
-    const phone = document.getElementById('inputPhone').value.trim();
-    if(!name || !phone){ alert('Укажите имя и телефон'); return; }
-    if(!cart.length){ alert('Корзина пуста'); return; }
+    // выбираем поля в приоритете: page inputs, иначе home inputs
+    const nameEl = document.getElementById('inputNamePage') || document.getElementById('inputName');
+    const phoneEl = document.getElementById('inputPhonePage') || document.getElementById('inputPhone');
+    const msgEl = document.getElementById('orderInfoPage') || document.getElementById('orderInfo');
 
-    const items = cart.map(i=>({ id:i.id, qty:i.qty, name: map[i.id]?.name || null, price: map[i.id]?.price || null }));
+    const name = nameEl ? nameEl.value.trim() : '';
+    const phone = phoneEl ? phoneEl.value.trim() : '';
+
+    if (!name || !phone){ alert('Укажите имя и телефон'); return; }
+    if (!cart || cart.length === 0){ alert('Корзина пуста'); return; }
+
+    const items = cart.map(it=> ({ id: it.id, qty: it.qty, name: map[it.id]?.name || null, price: map[it.id]?.price || null }) );
     const payload = { user_id: tgUser.id, username: tgUser.username, items, name, phone };
 
-    const btn = document.getElementById('btnOrder');
-    btn.disabled = true; btn.textContent = 'Отправка...';
+    // кнопки (если есть) — блокировка UI
+    const btnHome = document.getElementById('btnOrder');
+    const btnPage = document.getElementById('btnOrderPage');
+    if(btnHome) btnHome.disabled = true;
+    if(btnPage) btnPage.disabled = true;
+
+    const prevTextHome = btnHome ? btnHome.textContent : null;
+    const prevTextPage = btnPage ? btnPage.textContent : null;
+    if(btnHome) btnHome.textContent = 'Отправка...';
+    if(btnPage) btnPage.textContent = 'Отправка...';
+
     try {
       const res = await fetch(API_ORDERS, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-      if(!res.ok) throw new Error('network');
+      if (!res.ok) throw new Error('network error ' + res.status);
       const data = await res.json();
-      if(data.status === 'ok'){
+      if (data.status === 'ok') {
         cart = []; saveCart();
-        orderInfo.textContent = 'Заказ принят. Спасибо!';
-        showToast('Заказ оформлен');
-        if(insideTelegram && tg) { try { tg.sendData(JSON.stringify({type:'order_placed', order_id: data.order_id || null})); } catch(e){} }
+        if (msgEl) msgEl.textContent = 'Заказ принят. Спасибо!';
+        showToast('Заказ принят');
+        if (insideTelegram && tg) {
+          try { tg.sendData(JSON.stringify({ type:'order_placed', order_id:data.order_id || null })); } catch(e){}
+        }
       } else {
-        throw new Error('server');
+        throw new Error('server error');
       }
     } catch(e){
       console.error(e);
-      alert('Не удалось отправить заказ — попробуйте чуть позже');
+      alert('Не удалось отправить заказ — попробуйте позже');
     } finally {
-      btn.disabled = false; btn.textContent = 'Оформить заказ';
+      if(btnHome){ btnHome.disabled = false; btnHome.textContent = prevTextHome || 'Оформить'; }
+      if(btnPage){ btnPage.disabled = false; btnPage.textContent = prevTextPage || 'Оформить заказ'; }
     }
   }
 
