@@ -34,7 +34,6 @@
     return res.json();
   }
 
-  // экспорт в window.api
   global.api = {
     getProducts,
     createOrder,
