@@ -494,7 +494,7 @@
   }
 
   // === placeOrder ===
-  async function placeOrder(){
+  async function placeOrder() {
     const nameEl = document.getElementById('inputNamePage') || document.getElementById('inputName');
     const phoneEl = document.getElementById('inputPhonePage') || document.getElementById('inputPhone');
     const infoEl = document.getElementById('orderInfoPage') || document.getElementById('orderInfo');
@@ -512,36 +512,68 @@
     if (btnPage) { btnPage.disabled = true; btnPage.textContent = 'Отправка...'; }
 
     try {
-      const res = await fetch(API_ORDERS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error('network');
-      const data = await res.json();
-      if (data.status === 'ok') {
-        cart = []; saveCart();
+      const res = await fetch(API_ORDERS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      // пытаемся получить тело ответа (даже при ошибке), чтобы логировать причину
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        console.warn("Не удалось распарсить JSON из ответа сервера:", parseErr);
+      }
+
+      if (!res.ok) {
+        console.error("Ошибка от API /orders:", res.status, data);
+        throw new Error('network');
+      }
+
+      // ожидаем, что сервер вернёт { status: 'ok', order_id?: ..., total?: ... }
+      if (data && data.status === 'ok') {
+        const orderId = data.order_id ?? null;
+        const total = data.total ?? null;
+
+        cart = [];
+        saveCart();
+
         if (infoEl) infoEl.textContent = 'Заказ принят. Спасибо!';
         showToast('Заказ оформлен');
-        if (window.Telegram?.WebApp) {
+
+        // используем глобальную переменную tg если есть, иначе пытаемся взять window.Telegram.WebApp
+        const webapp = (typeof tg !== 'undefined' && tg) ? tg : (window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null);
+
+        if (webapp) {
+          const payloadToBot = {
+            type: 'order_placed',
+            order_id: orderId,
+            total: total
+          };
+
           try {
-            window.Telegram.WebApp.sendData(JSON.stringify({
-              type: 'order_placed'
-            }));
+            webapp.sendData(JSON.stringify(payloadToBot));
+            console.log("SEND DATA SUCCESS", payloadToBot);
 
-            console.log("SEND DATA SUCCESS");
-
+            // закрываем мини-эпп через небольшую задержку, чтобы сообщение успело отправиться
             setTimeout(() => {
-              window.Telegram.WebApp.close();
+              try { webapp.close(); } catch (e) { console.warn("Не удалось закрыть WebApp:", e); }
             }, 300);
-
-          } catch(e) {
+          } catch (e) {
             console.error("SEND DATA ERROR", e);
           }
         } else {
-          console.log("NOT INSIDE TELEGRAM");
+          console.log("NOT INSIDE TELEGRAM / WebApp not found — cannot sendData");
         }
+
       } else {
+        console.error("API возвратил неok статус или неверный формат:", data);
         throw new Error('server');
       }
+
     } catch (e) {
-      console.error(e);
+      console.error("placeOrder error:", e);
       alert('Ошибка отправки заказа — попробуйте позже');
     } finally {
       if (btnPage) { btnPage.disabled = false; btnPage.textContent = 'Оформить заказ'; }
