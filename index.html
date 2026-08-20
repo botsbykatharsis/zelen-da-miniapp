@@ -519,12 +519,18 @@
         cart = []; saveCart();
         if (infoEl) infoEl.textContent = 'Заказ принят. Спасибо!';
         showToast('Заказ оформлен');
-        if (window.Telegram && window.Telegram.WebApp) {
+        if (window.Telegram?.WebApp) {
           try {
             window.Telegram.WebApp.sendData(JSON.stringify({
               type: 'order_placed'
             }));
+
             console.log("SEND DATA SUCCESS");
+
+            setTimeout(() => {
+              window.Telegram.WebApp.close();
+            }, 300);
+
           } catch(e) {
             console.error("SEND DATA ERROR", e);
           }
