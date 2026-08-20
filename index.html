@@ -40,6 +40,9 @@
       display:flex;
       justify-content:center;
       padding-bottom:calc(var(--nav-height) + 16px);
+
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
     }
 
     .app{
@@ -71,6 +74,99 @@
     .page.active {
       display: block;
     }
+
+    .bottom-nav{
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+
+      display: flex;
+      justify-content: center;
+
+      background: transparent;
+      z-index: 100;
+    }
+
+    .nav-inner{
+      width: 100%;
+      max-width: var(--max-width);
+
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+
+      background: var(--surface);
+      border-radius: 16px 16px 0 0;
+
+      padding: 10px 0;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+    }
+
+    .nav-item{
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .nav-item.active{
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .nav-badge{
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 10px;
+      margin-left: 4px;
+    }
+
+    .title{
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .subtitle{
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px;
+    }
+
+    .brand{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .logo{
+      width:36px;
+      height:36px;
+      border-radius:10px;
+      background: var(--accent-soft);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      color: var(--accent);
+    }
+
+    #heroTitle{
+      font-size:18px;
+      font-weight:700;
+    }
+
+    #heroDesc{
+      margin-top:4px;
+      line-height:1.4;
+    }
   </style>
 </head>
 <body>
@@ -93,7 +189,7 @@
          1) HOME (главная + о нас + доставка)
          ========================== -->
     <main id="home" class="page active" aria-live="polite">
-      <section class="card" style="padding:0; overflow:hidden;">
+      <section class="card" style="padding:0; overflow:hidden; border-radius:20px;">
         <img id="heroImage" class="thumb" style="border-radius:0;" src="" />
 
         <div style="padding:14px">
@@ -114,7 +210,7 @@
           <div style="font-size:12px;color:var(--muted)">Микрозелень — свежо и вкусно</div>
         </div>
 
-        <div style="background:var(--surface);padding:12px;border-radius:12px;margin-top:10px;box-shadow:var(--soft-shadow)">
+        <div style="background:var(--surface);padding:12px;border-radius:12px;margin-top:10px;box-shadow:var(--shadow)">
           <p style="margin:0 0 8px 0;color:var(--muted)">Мы выращиваем микрозелень в Химках, работаем круглосуточно. Наша задача — привозить свежие листья на ваш стол.</p>
           <p style="margin:0 0 6px 0"><strong>Менеджер:</strong> <a href="https://t.me/Zakaz_Mikrozelen" target="_blank">@Zakaz_Mikrozelen</a></p>
           <p style="margin:0 0 6px 0"><strong>Телефон:</strong> <a href="tel:+79014054111">+7 (901) 405-41-11</a></p>
@@ -123,7 +219,7 @@
 
         <div style="margin-top:12px">
           <div style="font-weight:800;margin-bottom:8px">Доставка</div>
-          <div style="background:var(--surface);padding:12px;border-radius:12px;box-shadow:var(--soft-shadow)">
+          <div style="background:var(--surface);padding:12px;border-radius:12px;box-shadow:var(--shadow)">
             <p style="margin:0 0 6px 0;color:var(--muted)">Доставляем бесплатно по Левобережному району г. Химки. Подробности и время доставки согласовываются с менеджером.</p>
             <ul style="margin:6px 0 0 18px;color:var(--muted)">
               <li>Быстрая курьерская доставка — от 1 часа</li>
@@ -211,15 +307,22 @@
   let cart = JSON.parse(localStorage.getItem('zelen_cart_v4') || '[]');
 
   // DOM refs (safe)
-  const catalog = document.getElementById('catalog');
   const catalogFull = document.getElementById('catalogFull');
   const badge = document.getElementById('badge');
 
   // Navigation helpers
   function show(pageId){
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+
     const el = document.getElementById(pageId);
     if(el) el.classList.add('active');
+
+    // активное меню
+    document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+    if(pageId === 'home') navHome.classList.add('active');
+    if(pageId === 'catalogPage') navCatalog.classList.add('active');
+    if(pageId === 'cartPage') navCart.classList.add('active');
+
     window.scrollTo({top:0,behavior:'smooth'});
   }
   // bind nav
@@ -428,11 +531,6 @@
       const data = await r.json();
       products = data;
       map = {}; products.forEach(p=> map[p.id]=p);
-      // popular (first 6)
-      if(catalog){
-        catalog.innerHTML = '';
-        products.slice(0,6).forEach(p=> catalog.appendChild(productCard(p)));
-      }
       // full
       if(catalogFull){
         catalogFull.innerHTML = '';
