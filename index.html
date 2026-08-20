@@ -12,85 +12,57 @@
 
   <style>
     :root{
-      --bg: #f6f7f3;
+      --bg: #f4f6f3;
       --surface: #ffffff;
-      --muted: #6b6b6b;
-      --text: #0f1720;
-      --accent: #1f7a2b;
-      --accent-dark: #165a20;
-      --shadow: 0 8px 24px rgba(14,40,18,0.06);
-      --soft-shadow: 0 4px 12px rgba(14,40,18,0.04);
+      --text: #111;
+      --muted: #7a7a7a;
+
+      --accent: #2f7d32;
+      --accent-soft: #e8f3e8;
+
+      --radius: 16px;
+      --shadow: 0 6px 20px rgba(0,0,0,0.05);
+
       --nav-height: 76px;
-      --max-width: 640px;
+      --max-width: 420px;
     }
+
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:"Inter",system-ui,Arial,"Helvetica Neue";-webkit-font-smoothing:antialiased;color:var(--text)}
-    body{padding-bottom:calc(var(--nav-height) + 18px);display:flex;justify-content:center}
-    .app{width:100%;max-width:var(--max-width);padding:14px}
 
-/* Header */
-.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
-.brand{display:flex;align-items:center;gap:10px}
-.logo{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(180deg,#eaf9ea,#e1f3df);box-shadow:var(--soft-shadow);font-weight:700;color:var(--accent-dark)}
-.title{font-size:16px;font-weight:700;margin:0}
-.subtitle{font-size:12px;color:var(--muted);margin-top:2px}
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      font-family:"Inter", system-ui;
+    }
 
-/* Page */
-.page{display:none}
-.page.active{display:block}
+    body{
+      display:flex;
+      justify-content:center;
+      padding-bottom:calc(var(--nav-height) + 16px);
+    }
 
-/* Hero card */
-.hero{background:var(--surface);border-radius:14px;padding:12px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:flex-start}
-.hero-img{width:96px;height:96px;border-radius:10px;object-fit:cover;border:1px solid rgba(0,0,0,0.04)}
-.hero-info h2{margin:0;font-size:15px}
-.hero-info p{margin:8px 0 0 0;color:var(--muted);font-size:13px}
-.hero-actions{display:flex;gap:10px;margin-top:10px}
-.btn{border:0;padding:9px 12px;border-radius:10px;font-weight:700;cursor:pointer}
-.btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent-dark));color:#fff;box-shadow:0 6px 16px rgba(17,77,31,0.14)}
-.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--text)}
+    .app{
+      width:100%;
+      max-width:var(--max-width);
+      padding:16px;
+    }
 
-/* Catalog list - compact */
-.section-title{display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px 0;font-weight:700}
-.catalog{display:flex;flex-direction:column;gap:10px}
-.card{display:flex;gap:12px;align-items:center;background:var(--surface);padding:10px;border-radius:12px;box-shadow:var(--soft-shadow);border:1px solid rgba(0,0,0,0.02)}
-.thumb{width:78px;height:78px;border-radius:10px;object-fit:cover;border:1px solid rgba(0,0,0,0.04)}
-.info{flex:1}
-.name{font-size:14px;font-weight:700;margin:0}
-.desc{font-size:12px;color:var(--muted);margin-top:6px}
-.row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px}
-.price{font-weight:800}
-.controls{display:flex;gap:8px;align-items:center}
-.qty{min-width:36px;text-align:center;padding:6px 8px;border-radius:8px;background:#f6f6f5;font-weight:700}
-.icon-btn{background:#f4f5f3;border-radius:8px;padding:8px;border:0;cursor:pointer}
+    /* карточка */
+    .card{
+      background:var(--surface);
+      border-radius:var(--radius);
+      padding:12px;
+      box-shadow:var(--shadow);
+    }
 
-/* Cart */
-.cart-panel{background:var(--surface);border-radius:12px;padding:12px;box-shadow:var(--soft-shadow);margin-top:12px}
-.cart-empty{color:var(--muted);padding:18px;text-align:center}
-.cart-item{display:flex;gap:12px;align-items:center;padding:8px;border-radius:10px;background:#fff;border:1px solid rgba(0,0,0,0.02)}
-.cart-mini{width:64px;height:64px;border-radius:10px;object-fit:cover}
-.cart-meta{flex:1}
-.cart-actions{display:flex;gap:8px;align-items:center}
-
-/* Form */
-.input{width:100%;padding:10px;border-radius:10px;border:1px solid #e9e9e8;margin-top:10px;font-size:14px}
-
-/* bottom nav */
-.bottom-nav{position:fixed;left:0;right:0;bottom:10px;display:flex;justify-content:center;pointer-events:none;width:100%}
-.nav-inner{width:100%;max-width:var(--max-width);display:flex;gap:10px;padding:8px;box-sizing:border-box;pointer-events:auto}
-.nav-item{flex:1;background:linear-gradient(180deg,#ffffff,#f7fff8);border-radius:14px;padding:10px 8px;display:flex;justify-content:center;align-items:center;gap:8px;cursor:pointer;border:1px solid rgba(0,0,0,0.03);font-weight:700}
-.nav-badge{background:var(--accent);color:white;padding:2px 8px;border-radius:999px;font-weight:700;margin-left:6px;font-size:12px}
-
-/* small animations */
-.btn, .icon-btn, .nav-item{transition:transform .12s ease, box-shadow .12s ease}
-.btn:active, .icon-btn:active, .nav-item:active{transform:translateY(1px)}
-.card:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(14,40,18,0.08)}
-
-/* responsive tweaks */
-@media (max-width:420px){
-  .hero-img{width:86px;height:86px}
-  .logo{width:44px;height:44px}
-  .nav-inner{padding:6px}
-}
+    /* картинки */
+    .thumb{
+      width:100%;
+      aspect-ratio:1/1;
+      object-fit:cover;
+      border-radius:12px;
+    }
   </style>
 </head>
 <body>
@@ -113,15 +85,17 @@
          1) HOME (главная + о нас + доставка)
          ========================== -->
     <main id="home" class="page active" aria-live="polite">
-      <section class="hero" aria-label="Акция">
-        <img id="heroImage" class="hero-img" src="https://via.placeholder.com/300x200?text=%D0%90%D0%BA%D1%86%D0%B8%D1%8F" alt="Акция">
-        <div class="hero-info">
-          <h2 id="heroTitle">Загрузка...</h2>
-          <p id="heroDesc"></p>
-          <div class="hero-actions">
-            <button id="btnCatalog" class="btn btn-primary" aria-label="Открыть каталог">Смотреть каталог</button>
-            <button id="btnContact" class="btn btn-ghost" aria-label="Связаться">Связаться</button>
-          </div>
+      <section class="card" style="padding:0; overflow:hidden;">
+        <img id="heroImage" class="thumb" style="border-radius:0;" src="" />
+
+        <div style="padding:14px">
+          <div id="heroTitle" style="font-weight:700;font-size:16px;margin-bottom:6px"></div>
+          <div id="heroDesc" style="color:var(--muted);font-size:13px"></div>
+
+          <button id="btnCatalog"
+            style="margin-top:12px;width:100%;padding:12px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-weight:600;">
+            Смотреть каталог
+          </button>
         </div>
       </section>
 
@@ -160,7 +134,9 @@
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="font-weight:800">Каталог</div>
       </div>
-      <div id="catalogFull" style="margin-top:10px;display:flex;flex-direction:column;gap:10px"></div>
+      <div id="catalogFull"
+           style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      </div>
     </section>
 
     <!-- ==========================
@@ -254,30 +230,51 @@
 
   // create product card
   function productCard(p){
-    const wrap = document.createElement('div'); wrap.className='card';
-    const img = document.createElement('img'); img.className='thumb'; img.src = p.image || 'https://via.placeholder.com/300x200?text=No+image'; img.alt = p.name;
-    const info = document.createElement('div'); info.className='info';
-    const name = document.createElement('div'); name.className='name'; name.textContent = p.name;
-    const desc = document.createElement('div'); desc.className='desc'; desc.textContent = p.description || '';
-    const row = document.createElement('div'); row.className='row';
+    const wrap = document.createElement('div');
+    wrap.className='card';
 
-    const price = document.createElement('div'); price.className='price'; price.textContent = (p.price || 0) + ' ₽';
-    const controls = document.createElement('div'); controls.className='controls';
-    const dec = document.createElement('button'); dec.className='icon-btn'; dec.textContent='−';
-    const qty = document.createElement('div'); qty.className='qty'; qty.textContent='1';
-    const inc = document.createElement('button'); inc.className='icon-btn'; inc.textContent='+';
-    const add = document.createElement('button'); add.className='btn btn-primary'; add.textContent='В корзину';
+    const img = document.createElement('img');
+    img.className='thumb';
+    img.src = p.image || '';
+    img.alt = p.name;
 
-    let q = 1;
-    dec.addEventListener('click', ()=> { if(q>1) q--; qty.textContent = q; });
-    inc.addEventListener('click', ()=> { q++; qty.textContent = q; });
-    add.addEventListener('click', ()=> { addToCart(p.id, q); q = 1; qty.textContent = '1'; showToast('Добавлено в корзину'); });
+    const name = document.createElement('div');
+    name.style.fontWeight='600';
+    name.style.marginTop='10px';
+    name.textContent = p.name;
 
-    controls.appendChild(dec); controls.appendChild(qty); controls.appendChild(inc);
-    row.appendChild(price); row.appendChild(controls); row.appendChild(add);
+    const desc = document.createElement('div');
+    desc.style.color='var(--muted)';
+    desc.style.fontSize='13px';
+    desc.style.marginTop='4px';
+    desc.textContent = p.description || '';
 
-    info.appendChild(name); info.appendChild(desc); info.appendChild(row);
-    wrap.appendChild(img); wrap.appendChild(info);
+    const price = document.createElement('div');
+    price.style.marginTop='8px';
+    price.style.fontWeight='700';
+    price.textContent = (p.price || 0) + ' ₽';
+
+    const btn = document.createElement('button');
+    btn.textContent = 'В корзину';
+    btn.style.marginTop='10px';
+    btn.style.width='100%';
+    btn.style.padding='10px';
+    btn.style.borderRadius='10px';
+    btn.style.border='none';
+    btn.style.background='var(--accent)';
+    btn.style.color='#fff';
+
+    btn.addEventListener('click', ()=> {
+      addToCart(p.id, 1);
+      showToast('Добавлено');
+    });
+
+    wrap.appendChild(img);
+    wrap.appendChild(name);
+    wrap.appendChild(desc);
+    wrap.appendChild(price);
+    wrap.appendChild(btn);
+
     return wrap;
   }
 
