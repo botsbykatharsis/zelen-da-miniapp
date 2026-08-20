@@ -44,7 +44,6 @@
     /* header */
     .header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
     .brand { display:flex; align-items:center; gap:10px; }
-    .logo { width:46px; height:46px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(180deg,#f0fbf0,#e9f7ea); box-shadow:var(--soft-shadow); font-weight:700; color:var(--accent-2); }
     .title { font-size:15px; font-weight:700; margin:0; }
     .subtitle { font-size:12px; color:var(--muted); margin-top:2px; }
 
@@ -130,7 +129,6 @@
     /* responsive */
     @media (max-width:420px) {
       .hero-img-wrap { width:94px; height:94px; }
-      .logo { width:42px; height:42px; }
       .grid { grid-template-columns:repeat(2,1fr); }
     }
 
@@ -143,7 +141,6 @@
   <div class="app" id="app">
     <header class="header" role="banner">
       <div class="brand">
-        <div class="logo">ZD</div>
         <div>
           <div class="title">ZelenDa</div>
           <div class="subtitle">Свежая микрозелень</div>
