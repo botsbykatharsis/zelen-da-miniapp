@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>ZelenDa — микрозелень 🌱</title>
 
-  <!-- Шрифт -->
+  <!-- Интер + веса (легкий, норм, полужирный) -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <!-- Telegram Web App SDK -->
@@ -13,7 +13,7 @@
 
   <style>
     :root{
-      --bg: #f6f7f3;
+      --bg: #f4f6f3;
       --surface: #ffffff;
       --muted: #7b7b7b;
       --text: #0f1720;
@@ -26,90 +26,90 @@
       --radius: 12px;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:"Inter",system-ui,Arial,"Helvetica Neue";-webkit-font-smoothing:antialiased;color:var(--text)}
-    body{padding-bottom:calc(var(--nav-height) + 12px);display:flex;justify-content:center}
-    .app{width:100%;max-width:var(--max-width);padding:12px 12px 20px 12px}
+    * { box-sizing: border-box; }
+    html, body { height:100%; margin:0; padding:0; background:var(--bg); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+    body { font-family: "Inter", system-ui, Arial, sans-serif; color:var(--text); display:flex; justify-content:center; padding-bottom:calc(var(--nav-height) + 12px); }
+    .app { width:100%; max-width:var(--max-width); padding:12px 12px 20px; }
 
-    /* Header */
-    .header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-    .brand{display:flex;align-items:center;gap:10px}
-    .logo{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(180deg,#f0fbf0,#e9f7ea);box-shadow:var(--soft-shadow);font-weight:700;color:var(--accent-2)}
-    .title{font-size:15px;font-weight:700;margin:0}
-    .subtitle{font-size:12px;color:var(--muted);margin-top:2px}
+    /* header */
+    .header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .logo { width:46px; height:46px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(180deg,#f0fbf0,#e9f7ea); box-shadow:var(--soft-shadow); font-weight:700; color:var(--accent-2); }
+    .title { font-size:15px; font-weight:700; margin:0; }
+    .subtitle { font-size:12px; color:var(--muted); margin-top:2px; }
 
-    /* Page container */
-    .page{display:none}
-    .page.active{display:block}
+    /* pages */
+    .page { display:none; }
+    .page.active { display:block; }
 
-    /* Hero card */
-    .hero{background:var(--surface);border-radius:14px;padding:12px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:flex-start}
-    .hero-left{flex:1}
-    .hero-img-wrap{width:104px;border-radius:12px;overflow:hidden;background:#f0f2ef;display:flex;align-items:center;justify-content:center}
-    .hero-img{width:100%;height:100%;object-fit:cover;display:block;aspect-ratio:1/1}
-    .hero-info h2{margin:0;font-size:15px}
-    .hero-info p{margin:8px 0 0 0;color:var(--muted);font-size:13px}
-    .hero-actions{display:flex;gap:8px;margin-top:10px}
+    /* hero */
+    .card { background:var(--surface); border-radius:14px; padding:12px; box-shadow:var(--soft-shadow); display:flex; gap:12px; align-items:flex-start; border:1px solid rgba(0,0,0,0.02); }
+    .hero-img-wrap { width:104px; height:104px; border-radius:12px; overflow:hidden; background:#f0f2ef; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .hero-img { width:100%; height:100%; object-fit:cover; display:block; }
+    .hero-info h2 { margin:0; font-size:16px; line-height:1.1; }
+    .hero-info p { margin:8px 0 0 0; color:var(--muted); font-size:13px; }
 
-    .btn{border:0;padding:9px 12px;border-radius:12px;font-weight:700;cursor:pointer;font-size:14px}
-    .btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 8px 20px rgba(31,122,43,0.12)}
-    .btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--text)}
+    .hero-actions { display:flex; gap:8px; margin-top:10px; }
+    .btn { border:0; padding:10px 12px; border-radius:12px; font-weight:700; cursor:pointer; font-size:14px; }
+    .btn-primary { background: linear-gradient(180deg,var(--accent),var(--accent-2)); color:#fff; box-shadow:0 8px 20px rgba(31,122,43,0.12); }
+    .btn-ghost { background:transparent; border:1px solid rgba(0,0,0,0.06); color:var(--text); }
 
-    /* Catalog list - compact */
-    .section-title{display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px 0;font-weight:700}
-    .catalog{display:flex;flex-direction:column;gap:10px}
-    .card{display:flex;gap:12px;align-items:center;background:var(--surface);padding:10px;border-radius:12px;box-shadow:var(--soft-shadow);border:1px solid rgba(0,0,0,0.02)}
-    .thumb-wrap{width:86px;height:86px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#f3f4f2;display:inline-grid;place-items:center}
-    .thumb{width:100%;height:100%;object-fit:cover;display:block}
-    .info{flex:1}
-    .name{font-size:14px;font-weight:700;margin:0}
-    .desc{font-size:12px;color:var(--muted);margin-top:6px}
-    .row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px}
-    .price{font-weight:800}
-    .controls{display:flex;gap:8px;align-items:center}
-    .qty{min-width:36px;text-align:center;padding:6px 8px;border-radius:8px;background:#f6f6f5;font-weight:700}
-    .icon-btn{background:#f4f5f3;border-radius:8px;padding:6px 8px;border:0;cursor:pointer}
+    /* preview catalog (home) */
+    .section-title { display:flex; justify-content:space-between; align-items:center; margin:14px 0 8px 0; font-weight:700; }
+    .catalog { display:flex; flex-direction:column; gap:10px; }
 
-    /* Grid catalog page */
-    .grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:12px}
-    .card-grid{background:var(--surface);border-radius:14px;padding:10px;box-shadow:var(--soft-shadow);border:1px solid rgba(0,0,0,0.02)}
-    .card-grid .thumb-wrap{width:100%;height:0;padding-bottom:100%;border-radius:12px;overflow:hidden}
-    .card-grid .thumb{position:absolute;top:0;left:0;width:100%;height:100%;}
-    .card-grid .name{margin-top:10px;font-size:14px}
-    .card-grid .price{margin-top:8px;font-weight:800}
+    .thumb-wrap { width:86px; height:86px; border-radius:10px; overflow:hidden; flex-shrink:0; background:#f3f4f2; display:inline-grid; place-items:center; }
+    .thumb { width:100%; height:100%; object-fit:cover; display:block; }
 
-    /* Cart */
-    .cart-panel{background:var(--surface);border-radius:12px;padding:12px;box-shadow:var(--soft-shadow);margin-top:12px}
-    .cart-empty{color:var(--muted);padding:18px;text-align:center}
-    .cart-item{display:flex;gap:12px;align-items:center;padding:8px;border-radius:10px;background:#fff;border:1px solid rgba(0,0,0,0.02)}
-    .cart-mini{width:72px;height:72px;border-radius:8px;object-fit:cover}
-    .cart-meta{flex:1}
-    .cart-actions{display:flex;gap:8px;align-items:center}
+    .info { flex:1; }
+    .name { font-size:14px; font-weight:700; margin:0; }
+    .desc { font-size:12px; color:var(--muted); margin-top:6px; }
+    .row { display:flex; align-items:center; justify-content:space-between; margin-top:10px; gap:8px; }
+    .price { font-weight:800; }
 
-    /* Form */
-    .input{width:100%;padding:10px;border-radius:10px;border:1px solid #e9e9e8;margin-top:10px;font-size:14px}
+    .icon-btn { background:#f4f5f3; border-radius:8px; padding:6px 8px; border:0; cursor:pointer; }
 
-    /* bottom nav */
-    .bottom-nav{position:fixed;left:0;right:0;bottom:10px;display:flex;justify-content:center;pointer-events:none;width:100%}
-    .nav-inner{width:100%;max-width:var(--max-width);display:flex;gap:10px;padding:8px;box-sizing:border-box;pointer-events:auto}
-    .nav-item{flex:1;background:linear-gradient(180deg,#ffffff,#f7fff8);border-radius:14px;padding:10px 8px;display:flex;justify-content:center;align-items:center;gap:8px;cursor:pointer;border:1px solid rgba(0,0,0,0.03);font-weight:700; font-size:14px}
-    .nav-badge{background:var(--accent);color:white;padding:2px 8px;border-radius:999px;font-weight:700;margin-left:6px;font-size:12px}
+    /* grid catalog page */
+    .grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
+    .card-grid { background:var(--surface); border-radius:14px; padding:10px; box-shadow:var(--soft-shadow); border:1px solid rgba(0,0,0,0.02); display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+    .card-grid .thumb-wrap { width:100%; padding-bottom:100%; position:relative; border-radius:12px; overflow:hidden; }
+    .card-grid .thumb { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
 
-    /* small animations */
-    .btn, .icon-btn, .nav-item{transition:transform .12s ease, box-shadow .12s ease}
-    .btn:active, .icon-btn:active, .nav-item:active{transform:translateY(1px)}
-    .card:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(14,40,18,0.08)}
+    /* cart */
+    .cart-panel { background:var(--surface); border-radius:12px; padding:12px; box-shadow:var(--soft-shadow); margin-top:12px; }
+    .cart-empty { color:var(--muted); padding:18px; text-align:center; }
+    .cart-item { display:flex; gap:12px; align-items:center; padding:8px; border-radius:10px; background:#fff; border:1px solid rgba(0,0,0,0.02); }
+    .cart-mini { width:72px; height:72px; border-radius:8px; object-fit:cover; }
+    .cart-meta { flex:1; }
+    .cart-actions { display:flex; gap:8px; align-items:center; }
 
-    /* responsive tweaks */
-    @media (max-width:420px){
-      .hero-img-wrap{width:94px}
-      .logo{width:42px;height:42px}
-      .grid{grid-template-columns:repeat(2, 1fr)}
+    /* form */
+    .input { width:100%; padding:10px; border-radius:10px; border:1px solid #e9e9e8; margin-top:10px; font-size:14px; }
+
+    /* bottom nav - fixed and centered */
+    .bottom-nav { position:fixed; left:0; right:0; bottom:10px; display:flex; justify-content:center; pointer-events:none; width:100%; z-index:9999; }
+    .nav-inner { width:100%; max-width:var(--max-width); display:flex; gap:10px; padding:6px; box-sizing:border-box; pointer-events:auto; justify-content:space-between; }
+    .nav-item { flex:1; background:linear-gradient(180deg,#ffffff,#f7fff8); border-radius:14px; padding:10px 8px; display:flex; justify-content:center; align-items:center; gap:8px; cursor:pointer; border:1px solid rgba(0,0,0,0.03); font-weight:700; font-size:14px; text-align:center; }
+    .nav-item.active { color:var(--accent); box-shadow:0 6px 18px rgba(31,122,43,0.08); transform:translateY(-2px); }
+    .nav-badge { background:var(--accent); color:#fff; padding:2px 8px; border-radius:999px; font-weight:700; margin-left:6px; font-size:12px; }
+
+    /* small interactions */
+    .btn, .icon-btn, .nav-item { transition: transform .12s ease, box-shadow .12s ease; }
+    .btn:active, .icon-btn:active, .nav-item:active { transform:translateY(1px); }
+
+    /* hover card */
+    .card:hover { transform:translateY(-4px); box-shadow:0 14px 32px rgba(14,40,18,0.06); }
+
+    /* responsive */
+    @media (max-width:420px) {
+      .hero-img-wrap { width:94px; height:94px; }
+      .logo { width:42px; height:42px; }
+      .grid { grid-template-columns:repeat(2,1fr); }
     }
 
-    /* utility */
-    .muted{color:var(--muted);font-size:13px}
-    a.no-deco{color:inherit;text-decoration:none}
+    /* utilities */
+    .muted { color:var(--muted); font-size:13px; }
+    a.no-deco { color:inherit; text-decoration:none; }
   </style>
 </head>
 <body>
@@ -118,8 +118,8 @@
       <div class="brand">
         <div class="logo">ZD</div>
         <div>
-          <div class="title">Микрозелень · ZelenDa</div>
-          <div class="subtitle">Свежая микрозелень — доставка по Химкам</div>
+          <div class="title">ZelenDa</div>
+          <div class="subtitle">Свежая микрозелень</div>
         </div>
       </div>
       <div style="text-align:right">
@@ -132,15 +132,15 @@
          1) HOME (главная + о нас + доставка)
          ========================== -->
     <main id="home" class="page active" aria-live="polite">
-      <section class="hero" aria-label="Акция">
-        <div class="hero-left">
-          <div class="hero-img-wrap">
-            <img id="heroImage" class="hero-img" src="https://via.placeholder.com/400?text=Акция" alt="Акция">
-          </div>
+      <section class="card" style="padding:0; overflow:hidden; border-radius:20px;">
+        <div class="hero-img-wrap" style="width:40%;min-width:110px;max-width:140px;">
+          <img id="heroImage" class="hero-img" src="" alt="Акция">
         </div>
-        <div class="hero-info">
-          <h2 id="heroTitle">Набор (3 культуры)</h2>
-          <p id="heroDesc" class="muted">Акционный набор микрозелени — 500 ₽</p>
+
+        <div style="padding:14px;flex:1">
+          <div id="heroTitle" style="font-weight:700;font-size:16px;margin-bottom:6px">Набор (3 культуры)</div>
+          <div id="heroDesc" style="color:var(--muted);font-size:13px">Акционный набор микрозелени — 500 ₽</div>
+
           <div class="hero-actions">
             <button id="btnCatalog" class="btn btn-primary" aria-label="Открыть каталог">Смотреть каталог</button>
             <button id="btnContact" class="btn btn-ghost" aria-label="Связаться">Связаться</button>
@@ -196,7 +196,6 @@
       <div id="catalogFull" style="margin-top:12px" class="grid">
         <!-- full catalog (вставляется скриптом) -->
       </div>
-    </section>
 
     <!-- ==========================
          3) CART (корзина + оформление)
@@ -225,13 +224,12 @@
         <div id="orderInfoPage" style="margin-top:8px;color:var(--muted);font-size:13px"></div>
       </div>
     </section>
-
   </div> <!-- /.app -->
 
   <!-- bottom nav -->
   <div class="bottom-nav" role="navigation" aria-label="Навигация">
     <div class="nav-inner">
-      <div id="navHome" class="nav-item" aria-label="Главная">🏠 Главная</div>
+      <div id="navHome" class="nav-item active" aria-label="Главная">🏠 Главная</div>
       <div id="navCatalog" class="nav-item" aria-label="Каталог">📦 Каталог</div>
       <div id="navCart" class="nav-item" aria-label="Корзина">🛒 Корзина <span id="badge" class="nav-badge" style="display:none">0</span></div>
     </div>
@@ -239,15 +237,11 @@
 
 <script>
 (() => {
-  /* =========================
-     Конфигурация
-     ========================= */
+  // === Configuration ===
   const API_PRODUCTS = "https://zelen-da-backend.onrender.com/products/";
   const API_ORDERS = "https://zelen-da-backend.onrender.com/orders/";
 
-  /* =========================
-     Telegram WebApp init (без падения, если не в телеге)
-     ========================= */
+  // === Telegram safe init ===
   const tg = window.Telegram?.WebApp || null;
   let tgUser = { username: "unknown", id: null };
   let insideTelegram = false;
@@ -259,20 +253,18 @@
       tgUser.username = u.username || (u.first_name ? (u.first_name + (u.last_name ? ' ' + u.last_name : '')) : 'unknown');
       tgUser.id = u.id || null;
     }
-  } catch(e){ console.warn(e) }
+  } catch (e) {
+    console.warn('tg init error', e);
+  }
 
-  /* =========================
-     State
-     ========================= */
+  // === State ===
   let products = [];
   let map = {};
   let cart = JSON.parse(localStorage.getItem('zelen_cart_v4') || '[]');
 
-  /* =========================
-     DOM Refs
-     ========================= */
-  const catalogPreview = document.getElementById('catalogPreview'); // preview on home
-  const catalogFull = document.getElementById('catalogFull');       // full catalog page
+  // === DOM refs ===
+  const catalogPreview = document.getElementById('catalogPreview');
+  const catalogFull = document.getElementById('catalogFull');
   const badge = document.getElementById('badge');
 
   const navHome = document.getElementById('navHome');
@@ -280,63 +272,61 @@
   const navCart = document.getElementById('navCart');
 
   const btnCatalog = document.getElementById('btnCatalog');
-  const btnContact = document.getElementById('btnContact'); // may be null
+  const btnContact = document.getElementById('btnContact');
 
-  /* =========================
-     Navigation helper
-     ========================= */
+  // === Navigation ===
   function show(pageId){
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     const el = document.getElementById(pageId);
-    if(el) el.classList.add('active');
+    if (el) el.classList.add('active');
 
     // nav active state
-    document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
-    if(pageId === 'home') navHome.classList.add('active');
-    if(pageId === 'catalogPage') navCatalog.classList.add('active');
-    if(pageId === 'cartPage') navCart.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (pageId === 'home') navHome?.classList.add('active');
+    if (pageId === 'catalogPage') navCatalog?.classList.add('active');
+    if (pageId === 'cartPage') navCart?.classList.add('active');
 
-    window.scrollTo({top:0,behavior:'smooth'});
+    window.scrollTo({top:0, behavior:'smooth'});
   }
 
-  if(navHome) navHome.addEventListener('click', ()=> show('home'));
-  if(navCatalog) navCatalog.addEventListener('click', ()=> show('catalogPage'));
-  if(navCart) navCart.addEventListener('click', ()=> show('cartPage'));
-  if(btnCatalog) btnCatalog.addEventListener('click', ()=> show('catalogPage'));
-  if(btnContact) btnContact.addEventListener('click', ()=> { window.open('https://t.me/Zakaz_Mikrozelen','_blank'); });
+  navHome?.addEventListener('click', () => show('home'));
+  navCatalog?.addEventListener('click', () => show('catalogPage'));
+  navCart?.addEventListener('click', () => show('cartPage'));
+  btnCatalog?.addEventListener('click', () => show('catalogPage'));
+  btnContact?.addEventListener('click', () => { window.open('https://t.me/Zakaz_Mikrozelen','_blank'); });
 
-  /* =========================
-     Utilities: storage + badge
-     ========================= */
-  function saveCart(){ localStorage.setItem('zelen_cart_v4', JSON.stringify(cart)); renderCart(); updateBadge(); }
+  // === Utilities ===
+  function saveCart(){
+    localStorage.setItem('zelen_cart_v4', JSON.stringify(cart));
+    renderCart();
+    updateBadge();
+  }
+
   function updateBadge(){
-    const total = cart.reduce((s,i)=> s + i.qty, 0);
-    if(badge){
-      if(total>0){ badge.style.display='inline-block'; badge.textContent = total; } else badge.style.display='none';
+    const total = cart.reduce((s, i) => s + i.qty, 0);
+    if (badge) {
+      if (total > 0) { badge.style.display = 'inline-block'; badge.textContent = total; }
+      else { badge.style.display = 'none'; }
     }
   }
 
   function showToast(text){
     const t = document.createElement('div');
-    t.style.position='fixed';
-    t.style.left='50%';
-    t.style.transform='translateX(-50%)';
-    t.style.bottom='110px';
-    t.style.background='rgba(0,0,0,0.8)';
-    t.style.color='#fff';
-    t.style.padding='8px 12px';
-    t.style.borderRadius='12px';
-    t.style.zIndex=9999;
+    t.style.position = 'fixed';
+    t.style.left = '50%';
+    t.style.transform = 'translateX(-50%)';
+    t.style.bottom = '110px';
+    t.style.background = 'rgba(0,0,0,0.8)';
+    t.style.color = '#fff';
+    t.style.padding = '8px 12px';
+    t.style.borderRadius = '12px';
+    t.style.zIndex = 99999;
     t.textContent = text;
     document.body.appendChild(t);
-    setTimeout(()=> t.remove(),1200);
+    setTimeout(()=> t.remove(), 1100);
   }
 
-  /* =========================
-     Product card builders
-     - previewCard: compact horizontal (for home)
-     - gridCard: vertical grid (for catalog page)
-     ========================= */
+  // === Card builders ===
   function previewCard(p){
     const wrap = document.createElement('div');
     wrap.className = 'card';
@@ -351,17 +341,13 @@
 
     const info = document.createElement('div');
     info.className = 'info';
-    const name = document.createElement('div'); name.className='name'; name.textContent = p.name || '';
-    const desc = document.createElement('div'); desc.className='desc'; desc.textContent = p.description || '';
-    const row = document.createElement('div'); row.className='row';
+    const name = document.createElement('div'); name.className = 'name'; name.textContent = p.name || '';
+    const desc = document.createElement('div'); desc.className = 'desc'; desc.textContent = p.description || '';
+    const row = document.createElement('div'); row.className = 'row';
+    const price = document.createElement('div'); price.className = 'price'; price.textContent = (p.price || 0) ? (p.price + ' ₽') : '';
+    const add = document.createElement('button'); add.className = 'btn btn-primary'; add.textContent = 'В корзину';
 
-    const price = document.createElement('div'); price.className='price'; price.textContent = (p.price || 0) ? (p.price + ' ₽') : '';
-    const add = document.createElement('button'); add.className='btn btn-primary'; add.textContent='В корзину';
-
-    add.addEventListener('click', ()=> {
-      addToCart(p.id, 1);
-      showToast('Добавлено в корзину');
-    });
+    add.addEventListener('click', () => { addToCart(p.id, 1); showToast('Добавлено в корзину'); });
 
     row.appendChild(price);
     row.appendChild(add);
@@ -379,9 +365,8 @@
     const wrap = document.createElement('div');
     wrap.className = 'card-grid';
 
-    // image container - use position relative trick
     const imgWrap = document.createElement('div');
-    imgWrap.className = 'thumb-wrap'; // styles in CSS handle square ratio and overflow
+    imgWrap.className = 'thumb-wrap';
     imgWrap.style.position = 'relative';
     const img = document.createElement('img');
     img.className = 'thumb';
@@ -395,11 +380,11 @@
     img.style.objectFit = 'cover';
     imgWrap.appendChild(img);
 
-    const title = document.createElement('div'); title.className='name'; title.textContent = p.name || '';
-    const price = document.createElement('div'); price.className='price'; price.textContent = (p.price || 0) ? (p.price + ' ₽') : '';
+    const title = document.createElement('div'); title.className = 'name'; title.textContent = p.name || '';
+    const price = document.createElement('div'); price.className = 'price'; price.textContent = (p.price || 0) ? (p.price + ' ₽') : '';
 
-    const btn = document.createElement('button'); btn.className='btn btn-primary'; btn.style.width='100%'; btn.style.marginTop='8px'; btn.textContent = 'В корзину';
-    btn.addEventListener('click', ()=>{ addToCart(p.id, 1); showToast('Добавлено'); });
+    const btn = document.createElement('button'); btn.className = 'btn btn-primary'; btn.style.width = '100%'; btn.style.marginTop = '8px'; btn.textContent = 'В корзину';
+    btn.addEventListener('click', () => { addToCart(p.id, 1); showToast('Добавлено'); });
 
     wrap.appendChild(imgWrap);
     wrap.appendChild(title);
@@ -409,97 +394,93 @@
     return wrap;
   }
 
-  /* =========================
-     Cart functions (render for home preview + cart page)
-     ========================= */
+  // === Cart rendering (home preview + cart page) ===
   function renderCart(){
-    // home preview area (if exists)
-    const homePreviewList = document.getElementById('cartList'); // optional small preview, might be absent
+    // home preview (if there is an area)
+    const homeList = document.getElementById('cartList');
     const homeEmpty = document.getElementById('cartEmpty');
-    if(homePreviewList && homeEmpty){
-      homePreviewList.innerHTML = '';
-      if(!cart.length){
-        homeEmpty.style.display='block';
-        if(document.getElementById('total')) document.getElementById('total').textContent = '0 ₽';
+    if (homeList && homeEmpty) {
+      homeList.innerHTML = '';
+      if (!cart.length) {
+        homeEmpty.style.display = 'block';
+        if (document.getElementById('total')) document.getElementById('total').textContent = '0 ₽';
       } else {
-        homeEmpty.style.display='none';
+        homeEmpty.style.display = 'none';
         cart.forEach(item => {
-          const p = map[item.id] || {name:'Товар', price:0, image:''};
-          const el = document.createElement('div'); el.className='cart-item';
-          const img = document.createElement('img'); img.className='cart-mini'; img.src = p.image || 'https://via.placeholder.com/200';
-          const meta = document.createElement('div'); meta.className='cart-meta';
-          const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = p.name;
+          const p = map[item.id] || { name: 'Товар', price: 0, image: '' };
+          const el = document.createElement('div'); el.className = 'cart-item';
+          const img = document.createElement('img'); img.className = 'cart-mini'; img.src = p.image || 'https://via.placeholder.com/200';
+          const meta = document.createElement('div'); meta.className = 'cart-meta';
+          const title = document.createElement('div'); title.style.fontWeight = '700'; title.textContent = p.name;
           const sub = document.createElement('div'); sub.style.color = 'var(--muted)'; sub.textContent = `${item.qty} × ${p.price} ₽`;
           meta.appendChild(title); meta.appendChild(sub);
 
-          const actions = document.createElement('div'); actions.className='cart-actions';
-          const plus = document.createElement('button'); plus.className='icon-btn'; plus.textContent='+';
-          const minus = document.createElement('button'); minus.className='icon-btn'; minus.textContent='−';
-          const rm = document.createElement('button'); rm.className='icon-btn'; rm.textContent='✕';
+          const actions = document.createElement('div'); actions.className = 'cart-actions';
+          const plus = document.createElement('button'); plus.className = 'icon-btn'; plus.textContent = '+';
+          const minus = document.createElement('button'); minus.className = 'icon-btn'; minus.textContent = '−';
+          const rm = document.createElement('button'); rm.className = 'icon-btn'; rm.textContent = '✕';
 
-          plus.addEventListener('click', ()=> { item.qty++; saveCart(); });
-          minus.addEventListener('click', ()=> { item.qty--; if(item.qty<=0) cart = cart.filter(x=>x.id!==item.id); saveCart(); });
-          rm.addEventListener('click', ()=> { cart = cart.filter(x=>x.id!==item.id); saveCart(); });
+          plus.addEventListener('click', () => { item.qty++; saveCart(); });
+          minus.addEventListener('click', () => { item.qty--; if (item.qty <= 0) cart = cart.filter(x => x.id !== item.id); saveCart(); });
+          rm.addEventListener('click', () => { cart = cart.filter(x => x.id !== item.id); saveCart(); });
 
           actions.appendChild(plus); actions.appendChild(minus); actions.appendChild(rm);
           el.appendChild(img); el.appendChild(meta); el.appendChild(actions);
-          homePreviewList.appendChild(el);
+          homeList.appendChild(el);
         });
-        if(document.getElementById('total')) document.getElementById('total').textContent = cart.reduce((s,i)=> s + ((map[i.id]?.price||0)*i.qty), 0) + ' ₽';
+        if (document.getElementById('total')) document.getElementById('total').textContent = cart.reduce((s, i) => s + ((map[i.id]?.price || 0) * i.qty), 0) + ' ₽';
       }
     }
 
     // cart page render
     const pageList = document.getElementById('cartListPage');
     const pageEmpty = document.getElementById('cartEmptyPage');
-    if(pageList && pageEmpty){
+    if (pageList && pageEmpty) {
       pageList.innerHTML = '';
-      if(!cart.length){
-        pageEmpty.style.display='block';
-        if(document.getElementById('totalPage')) document.getElementById('totalPage').textContent = '0 ₽';
+      if (!cart.length) {
+        pageEmpty.style.display = 'block';
+        if (document.getElementById('totalPage')) document.getElementById('totalPage').textContent = '0 ₽';
       } else {
-        pageEmpty.style.display='none';
+        pageEmpty.style.display = 'none';
         cart.forEach(item => {
-          const p = map[item.id] || {name:'Товар', price:0, image:''};
-          const el = document.createElement('div'); el.className='cart-item';
-          const img = document.createElement('img'); img.className='cart-mini'; img.src = p.image || 'https://via.placeholder.com/200';
-          const meta = document.createElement('div'); meta.className='cart-meta';
-          const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = p.name;
+          const p = map[item.id] || { name: 'Товар', price: 0, image: '' };
+          const el = document.createElement('div'); el.className = 'cart-item';
+          const img = document.createElement('img'); img.className = 'cart-mini'; img.src = p.image || 'https://via.placeholder.com/200';
+          const meta = document.createElement('div'); meta.className = 'cart-meta';
+          const title = document.createElement('div'); title.style.fontWeight = '700'; title.textContent = p.name;
           const sub = document.createElement('div'); sub.style.color = 'var(--muted)'; sub.textContent = `${item.qty} × ${p.price} ₽`;
           meta.appendChild(title); meta.appendChild(sub);
 
-          const actions = document.createElement('div'); actions.className='cart-actions';
-          const plus = document.createElement('button'); plus.className='icon-btn'; plus.textContent='+';
-          const minus = document.createElement('button'); minus.className='icon-btn'; minus.textContent='−';
-          const rm = document.createElement('button'); rm.className='icon-btn'; rm.textContent='✕';
+          const actions = document.createElement('div'); actions.className = 'cart-actions';
+          const plus = document.createElement('button'); plus.className = 'icon-btn'; plus.textContent = '+';
+          const minus = document.createElement('button'); minus.className = 'icon-btn'; minus.textContent = '−';
+          const rm = document.createElement('button'); rm.className = 'icon-btn'; rm.textContent = '✕';
 
-          plus.addEventListener('click', ()=> { item.qty++; saveCart(); });
-          minus.addEventListener('click', ()=> { item.qty--; if(item.qty<=0) cart = cart.filter(x=>x.id!==item.id); saveCart(); });
-          rm.addEventListener('click', ()=> { cart = cart.filter(x=>x.id!==item.id); saveCart(); });
+          plus.addEventListener('click', () => { item.qty++; saveCart(); });
+          minus.addEventListener('click', () => { item.qty--; if (item.qty <= 0) cart = cart.filter(x => x.id !== item.id); saveCart(); });
+          rm.addEventListener('click', () => { cart = cart.filter(x => x.id !== item.id); saveCart(); });
 
           actions.appendChild(plus); actions.appendChild(minus); actions.appendChild(rm);
           el.appendChild(img); el.appendChild(meta); el.appendChild(actions);
           pageList.appendChild(el);
         });
-        const sum = cart.reduce((s,i)=> s + ((map[i.id]?.price||0)*i.qty), 0);
-        if(document.getElementById('totalPage')) document.getElementById('totalPage').textContent = sum + ' ₽';
+
+        const sum = cart.reduce((s, i) => s + ((map[i.id]?.price || 0) * i.qty), 0);
+        if (document.getElementById('totalPage')) document.getElementById('totalPage').textContent = sum + ' ₽';
       }
     }
   }
 
-  /* =========================
-     addToCart
-     ========================= */
-  function addToCart(id, qty=1){
+  // === addToCart ===
+  function addToCart(id, qty = 1){
     qty = Math.max(1, Math.floor(qty));
-    const found = cart.find(i=>i.id===id);
-    if(found) found.qty += qty; else cart.push({id,qty});
+    const found = cart.find(i => i.id === id);
+    if (found) found.qty += qty;
+    else cart.push({ id, qty });
     saveCart();
   }
 
-  /* =========================
-     Order sending
-     ========================= */
+  // === placeOrder ===
   async function placeOrder(){
     const nameEl = document.getElementById('inputNamePage') || document.getElementById('inputName');
     const phoneEl = document.getElementById('inputPhonePage') || document.getElementById('inputPhone');
@@ -508,105 +489,94 @@
     const name = nameEl ? nameEl.value.trim() : '';
     const phone = phoneEl ? phoneEl.value.trim() : '';
 
-    if(!name || !phone){ alert('Укажите имя и телефон'); return; }
-    if(!cart.length){ alert('Корзина пуста'); return; }
+    if (!name || !phone) { alert('Укажите имя и телефон'); return; }
+    if (!cart.length) { alert('Корзина пуста'); return; }
 
-    const items = cart.map(i=> ({ id:i.id, qty:i.qty, name: map[i.id]?.name || null, price: map[i.id]?.price || null }) );
+    const items = cart.map(i => ({ id: i.id, qty: i.qty, name: map[i.id]?.name || null, price: map[i.id]?.price || null }));
     const payload = { user_id: tgUser.id, username: tgUser.username, items, name, phone };
 
     const btnPage = document.getElementById('btnOrderPage');
-    if(btnPage) { btnPage.disabled = true; btnPage.textContent = 'Отправка...'; }
+    if (btnPage) { btnPage.disabled = true; btnPage.textContent = 'Отправка...'; }
 
-    try{
-      const res = await fetch(API_ORDERS, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-      if(!res.ok) throw new Error('network');
+    try {
+      const res = await fetch(API_ORDERS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error('network');
       const data = await res.json();
-      if(data.status === 'ok'){
+      if (data.status === 'ok') {
         cart = []; saveCart();
-        if(infoEl) infoEl.textContent = 'Заказ принят. Спасибо!';
+        if (infoEl) infoEl.textContent = 'Заказ принят. Спасибо!';
         showToast('Заказ оформлен');
-        if(insideTelegram && tg) {
-          try {
-            tg.sendData(JSON.stringify({type:'order_placed', order_id: data.order_id || null}));
-          } catch(e){}
+        if (insideTelegram && tg) {
+          try { tg.sendData(JSON.stringify({ type: 'order_placed', order_id: data.order_id || null })); } catch(e){}
         }
       } else {
         throw new Error('server');
       }
-    } catch(e){
+    } catch (e) {
       console.error(e);
       alert('Ошибка отправки заказа — попробуйте позже');
     } finally {
-      if(btnPage){ btnPage.disabled = false; btnPage.textContent = 'Оформить заказ'; }
+      if (btnPage) { btnPage.disabled = false; btnPage.textContent = 'Оформить заказ'; }
     }
   }
 
-  /* =========================
-     Clear cart buttons handlers
-     ========================= */
-  const btnClearPage = document.getElementById('btnClearPage');
-  if(btnClearPage) btnClearPage.addEventListener('click', ()=> {
-    if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Корзина очищена'); }
+  // clear handlers
+  document.getElementById('btnClearPage')?.addEventListener('click', () => {
+    if (confirm('Очистить корзину?')) { cart = []; saveCart(); showToast('Корзина очищена'); }
   });
 
-  /* =========================
-     Load products from backend and render
-     ========================= */
+  // === load products ===
   async function load(){
-    if(catalogPreview) catalogPreview.innerHTML = '<div style="color:var(--muted)">Загрузка…</div>';
-    if(catalogFull) catalogFull.innerHTML = '';
+    if (catalogPreview) catalogPreview.innerHTML = '<div style="color:var(--muted)">Загрузка…</div>';
+    if (catalogFull) catalogFull.innerHTML = '';
 
-    try{
-      const r = await fetch(API_PRODUCTS);
-      if(!r.ok) throw new Error('fetch');
-      const data = await r.json();
+    try {
+      const res = await fetch(API_PRODUCTS);
+      if (!res.ok) throw new Error('fetch');
+      const data = await res.json();
       products = Array.isArray(data) ? data : [];
-      map = {}; products.forEach(p=> map[p.id] = p);
+      map = {}; products.forEach(p => map[p.id] = p);
 
-      // promo (first product or product with is_promo true)
+      // determine promo: prefer is_promo true, else first
       const promo = products.find(p => p.is_promo) || products[0] || null;
-      if(promo){
+      if (promo) {
         const heroImg = document.getElementById('heroImage');
-        if(heroImg) heroImg.src = promo.image || 'https://via.placeholder.com/400?text=Акция';
+        if (heroImg) heroImg.src = promo.image || 'https://via.placeholder.com/400?text=Акция';
         const heroTitle = document.getElementById('heroTitle');
-        if(heroTitle) heroTitle.textContent = promo.name || '';
+        if (heroTitle) heroTitle.textContent = promo.name || '';
         const heroDesc = document.getElementById('heroDesc');
-        if(heroDesc) heroDesc.textContent = (promo.description || '') + (promo.price ? ` • ${promo.price} ₽` : '');
+        if (heroDesc) heroDesc.textContent = (promo.description || '') + (promo.price ? ` • ${promo.price} ₽` : '');
       }
 
-      // preview (first 4)
-      if(catalogPreview){
+      // preview - first up to 4
+      if (catalogPreview) {
         catalogPreview.innerHTML = '';
-        products.slice(0,4).forEach(p=> catalogPreview.appendChild(previewCard(p)));
+        products.slice(0,4).forEach(p => catalogPreview.appendChild(previewCard(p)));
       }
 
       // full grid
-      if(catalogFull){
+      if (catalogFull) {
         catalogFull.innerHTML = '';
-        products.forEach(p=> catalogFull.appendChild(gridCard(p)));
+        products.forEach(p => catalogFull.appendChild(gridCard(p)));
       }
-
-    } catch(e){
+    } catch (e) {
       console.error(e);
-      if(catalogPreview) catalogPreview.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
-      if(catalogFull) catalogFull.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
+      if (catalogPreview) catalogPreview.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
+      if (catalogFull) catalogFull.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
     }
 
     renderCart();
     updateBadge();
   }
 
-  // expose helper for debug
+  // expose for debug
   window.zelen = { cart, products, map, addToCart, saveCart };
 
-  /* =========================
-     Startup
-     ========================= */
+  // startup
   load();
 
-  // attach order handler
-  const btnOrderPage = document.getElementById('btnOrderPage');
-  if(btnOrderPage) btnOrderPage.addEventListener('click', placeOrder);
+  // attach order button
+  document.getElementById('btnOrderPage')?.addEventListener('click', placeOrder);
 
 })();
 </script>
