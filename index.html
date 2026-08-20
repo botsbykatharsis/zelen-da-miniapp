@@ -520,7 +520,11 @@
         if (infoEl) infoEl.textContent = 'Заказ принят. Спасибо!';
         showToast('Заказ оформлен');
         if (insideTelegram && tg) {
-          try { tg.sendData(JSON.stringify({ type: 'order_placed', order_id: data.order_id || null })); } catch(e){}
+          try { tg.sendData(JSON.stringify({
+            type: 'order_placed',
+            name,
+            phone
+          })); } catch(e){}
         }
       } else {
         throw new Error('server');
