@@ -5,171 +5,111 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>ZelenDa — микрозелень 🌱</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Шрифт -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <!-- Telegram Web App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
     :root{
-      --bg: #f4f6f3;
+      --bg: #f6f7f3;
       --surface: #ffffff;
-      --text: #111;
-      --muted: #7a7a7a;
-
-      --accent: #2f7d32;
-      --accent-soft: #e8f3e8;
-
-      --radius: 16px;
-      --shadow: 0 6px 20px rgba(0,0,0,0.05);
-
+      --muted: #7b7b7b;
+      --text: #0f1720;
+      --accent: #1f7a2b;
+      --accent-2: #2b8a36;
+      --shadow: 0 12px 28px rgba(14,40,18,0.06);
+      --soft-shadow: 0 6px 18px rgba(14,40,18,0.04);
       --nav-height: 76px;
-      --max-width: 420px;
+      --max-width: 420px; /* узкий формат для мини-эпп */
+      --radius: 12px;
     }
 
     *{box-sizing:border-box}
+    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:"Inter",system-ui,Arial,"Helvetica Neue";-webkit-font-smoothing:antialiased;color:var(--text)}
+    body{padding-bottom:calc(var(--nav-height) + 12px);display:flex;justify-content:center}
+    .app{width:100%;max-width:var(--max-width);padding:12px 12px 20px 12px}
 
-    html,body{
-      margin:0;
-      padding:0;
-      background:var(--bg);
-      font-family: 'Inter', sans-serif;
+    /* Header */
+    .header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(180deg,#f0fbf0,#e9f7ea);box-shadow:var(--soft-shadow);font-weight:700;color:var(--accent-2)}
+    .title{font-size:15px;font-weight:700;margin:0}
+    .subtitle{font-size:12px;color:var(--muted);margin-top:2px}
+
+    /* Page container */
+    .page{display:none}
+    .page.active{display:block}
+
+    /* Hero card */
+    .hero{background:var(--surface);border-radius:14px;padding:12px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:flex-start}
+    .hero-left{flex:1}
+    .hero-img-wrap{width:104px;border-radius:12px;overflow:hidden;background:#f0f2ef;display:flex;align-items:center;justify-content:center}
+    .hero-img{width:100%;height:100%;object-fit:cover;display:block;aspect-ratio:1/1}
+    .hero-info h2{margin:0;font-size:15px}
+    .hero-info p{margin:8px 0 0 0;color:var(--muted);font-size:13px}
+    .hero-actions{display:flex;gap:8px;margin-top:10px}
+
+    .btn{border:0;padding:9px 12px;border-radius:12px;font-weight:700;cursor:pointer;font-size:14px}
+    .btn-primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 8px 20px rgba(31,122,43,0.12)}
+    .btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--text)}
+
+    /* Catalog list - compact */
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px 0;font-weight:700}
+    .catalog{display:flex;flex-direction:column;gap:10px}
+    .card{display:flex;gap:12px;align-items:center;background:var(--surface);padding:10px;border-radius:12px;box-shadow:var(--soft-shadow);border:1px solid rgba(0,0,0,0.02)}
+    .thumb-wrap{width:86px;height:86px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#f3f4f2;display:inline-grid;place-items:center}
+    .thumb{width:100%;height:100%;object-fit:cover;display:block}
+    .info{flex:1}
+    .name{font-size:14px;font-weight:700;margin:0}
+    .desc{font-size:12px;color:var(--muted);margin-top:6px}
+    .row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px}
+    .price{font-weight:800}
+    .controls{display:flex;gap:8px;align-items:center}
+    .qty{min-width:36px;text-align:center;padding:6px 8px;border-radius:8px;background:#f6f6f5;font-weight:700}
+    .icon-btn{background:#f4f5f3;border-radius:8px;padding:6px 8px;border:0;cursor:pointer}
+
+    /* Grid catalog page */
+    .grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:12px}
+    .card-grid{background:var(--surface);border-radius:14px;padding:10px;box-shadow:var(--soft-shadow);border:1px solid rgba(0,0,0,0.02)}
+    .card-grid .thumb-wrap{width:100%;height:0;padding-bottom:100%;border-radius:12px;overflow:hidden}
+    .card-grid .thumb{position:absolute;top:0;left:0;width:100%;height:100%;}
+    .card-grid .name{margin-top:10px;font-size:14px}
+    .card-grid .price{margin-top:8px;font-weight:800}
+
+    /* Cart */
+    .cart-panel{background:var(--surface);border-radius:12px;padding:12px;box-shadow:var(--soft-shadow);margin-top:12px}
+    .cart-empty{color:var(--muted);padding:18px;text-align:center}
+    .cart-item{display:flex;gap:12px;align-items:center;padding:8px;border-radius:10px;background:#fff;border:1px solid rgba(0,0,0,0.02)}
+    .cart-mini{width:72px;height:72px;border-radius:8px;object-fit:cover}
+    .cart-meta{flex:1}
+    .cart-actions{display:flex;gap:8px;align-items:center}
+
+    /* Form */
+    .input{width:100%;padding:10px;border-radius:10px;border:1px solid #e9e9e8;margin-top:10px;font-size:14px}
+
+    /* bottom nav */
+    .bottom-nav{position:fixed;left:0;right:0;bottom:10px;display:flex;justify-content:center;pointer-events:none;width:100%}
+    .nav-inner{width:100%;max-width:var(--max-width);display:flex;gap:10px;padding:8px;box-sizing:border-box;pointer-events:auto}
+    .nav-item{flex:1;background:linear-gradient(180deg,#ffffff,#f7fff8);border-radius:14px;padding:10px 8px;display:flex;justify-content:center;align-items:center;gap:8px;cursor:pointer;border:1px solid rgba(0,0,0,0.03);font-weight:700; font-size:14px}
+    .nav-badge{background:var(--accent);color:white;padding:2px 8px;border-radius:999px;font-weight:700;margin-left:6px;font-size:12px}
+
+    /* small animations */
+    .btn, .icon-btn, .nav-item{transition:transform .12s ease, box-shadow .12s ease}
+    .btn:active, .icon-btn:active, .nav-item:active{transform:translateY(1px)}
+    .card:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(14,40,18,0.08)}
+
+    /* responsive tweaks */
+    @media (max-width:420px){
+      .hero-img-wrap{width:94px}
+      .logo{width:42px;height:42px}
+      .grid{grid-template-columns:repeat(2, 1fr)}
     }
 
-    body{
-      display:flex;
-      justify-content:center;
-      padding-bottom:calc(var(--nav-height) + 16px);
-
-      font-weight: 400;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .app{
-      width:100%;
-      max-width:var(--max-width);
-      padding:16px;
-    }
-
-    /* карточка */
-    .card{
-      background:var(--surface);
-      border-radius:var(--radius);
-      padding:12px;
-      box-shadow:var(--shadow);
-    }
-
-    /* картинки */
-    .thumb{
-      width:100%;
-      aspect-ratio:1/1;
-      object-fit:cover;
-      border-radius:12px;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    .bottom-nav{
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-
-      display: flex;
-      justify-content: space-around;
-
-      background: #fff;
-      padding: 10px;
-      border-top: 1px solid #eee;
-
-      z-index: 1000;
-    }
-
-    .nav-inner{
-      width: 100%;
-      max-width: var(--max-width);
-
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-
-      background: var(--surface);
-      border-radius: 16px 16px 0 0;
-
-      padding: 10px 0;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
-    }
-
-    .nav-item{
-      font-size: 13px;
-      color: var(--muted);
-      cursor: pointer;
-    }
-
-    .nav-item.active{
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    .nav-badge{
-      background: var(--accent);
-      color: #fff;
-      border-radius: 999px;
-      padding: 2px 6px;
-      font-size: 10px;
-      margin-left: 4px;
-    }
-
-    .title{
-      font-weight: 700;
-      font-size: 16px;
-    }
-
-    .subtitle{
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:12px;
-    }
-
-    .brand{
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-
-    .logo{
-      width:36px;
-      height:36px;
-      border-radius:10px;
-      background: var(--accent-soft);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:700;
-      color: var(--accent);
-    }
-
-    #heroTitle{
-      font-size:18px;
-      font-weight:700;
-    }
-
-    #heroDesc{
-      margin-top:4px;
-      line-height:1.4;
-    }
+    /* utility */
+    .muted{color:var(--muted);font-size:13px}
+    a.no-deco{color:inherit;text-decoration:none}
   </style>
 </head>
 <body>
@@ -178,13 +118,13 @@
       <div class="brand">
         <div class="logo">ZD</div>
         <div>
-          <div class="title">ZelenDa</div>
-          <div class="subtitle">Свежая микрозелень</div>
+          <div class="title">Микрозелень · ZelenDa</div>
+          <div class="subtitle">Свежая микрозелень — доставка по Химкам</div>
         </div>
       </div>
       <div style="text-align:right">
         <div style="font-size:12px;color:var(--muted)">24/7</div>
-        <div style="margin-top:6px;font-weight:700;color:var(--accent-dark)"><a href="https://t.me/Zakaz_Mikrozelen" target="_blank" style="color:inherit;text-decoration:none">@Zakaz_Mikrozelen</a></div>
+        <div style="margin-top:6px;font-weight:700;color:var(--accent-2)"><a class="no-deco" href="https://t.me/Zakaz_Mikrozelen" target="_blank">@Zakaz_Mikrozelen</a></div>
       </div>
     </header>
 
@@ -192,17 +132,19 @@
          1) HOME (главная + о нас + доставка)
          ========================== -->
     <main id="home" class="page active" aria-live="polite">
-      <section class="card" style="padding:0; overflow:hidden; border-radius:20px;">
-        <img id="heroImage" class="thumb" style="border-radius:0;" src="" />
-
-        <div style="padding:14px">
-          <div id="heroTitle" style="font-weight:700;font-size:16px;margin-bottom:6px"></div>
-          <div id="heroDesc" style="color:var(--muted);font-size:13px"></div>
-
-          <button id="btnCatalog"
-            style="margin-top:12px;width:100%;padding:12px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-weight:600;">
-            Смотреть каталог
-          </button>
+      <section class="hero" aria-label="Акция">
+        <div class="hero-left">
+          <div class="hero-img-wrap">
+            <img id="heroImage" class="hero-img" src="https://via.placeholder.com/400?text=Акция" alt="Акция">
+          </div>
+        </div>
+        <div class="hero-info">
+          <h2 id="heroTitle">Набор (3 культуры)</h2>
+          <p id="heroDesc" class="muted">Акционный набор микрозелени — 500 ₽</p>
+          <div class="hero-actions">
+            <button id="btnCatalog" class="btn btn-primary" aria-label="Открыть каталог">Смотреть каталог</button>
+            <button id="btnContact" class="btn btn-ghost" aria-label="Связаться">Связаться</button>
+          </div>
         </div>
       </section>
 
@@ -213,16 +155,16 @@
           <div style="font-size:12px;color:var(--muted)">Микрозелень — свежо и вкусно</div>
         </div>
 
-        <div style="background:var(--surface);padding:12px;border-radius:12px;margin-top:10px;box-shadow:var(--shadow)">
+        <div style="background:var(--surface);padding:12px;border-radius:12px;margin-top:10px;box-shadow:var(--soft-shadow)">
           <p style="margin:0 0 8px 0;color:var(--muted)">Мы выращиваем микрозелень в Химках, работаем круглосуточно. Наша задача — привозить свежие листья на ваш стол.</p>
-          <p style="margin:0 0 6px 0"><strong>Менеджер:</strong> <a href="https://t.me/Zakaz_Mikrozelen" target="_blank">@Zakaz_Mikrozelen</a></p>
-          <p style="margin:0 0 6px 0"><strong>Телефон:</strong> <a href="tel:+79014054111">+7 (901) 405-41-11</a></p>
+          <p style="margin:0 0 6px 0"><strong>Менеджер:</strong> <a class="no-deco" href="https://t.me/Zakaz_Mikrozelen" target="_blank">@Zakaz_Mikrozelen</a></p>
+          <p style="margin:0 0 6px 0"><strong>Телефон:</strong> <a class="no-deco" href="tel:+79014054111">+7 (901) 405-41-11</a></p>
           <p style="margin:0"><strong>Адрес:</strong> г. Химки, ул. Совхозная, д.14</p>
         </div>
 
         <div style="margin-top:12px">
           <div style="font-weight:800;margin-bottom:8px">Доставка</div>
-          <div style="background:var(--surface);padding:12px;border-radius:12px;box-shadow:var(--shadow)">
+          <div style="background:var(--surface);padding:12px;border-radius:12px;box-shadow:var(--soft-shadow)">
             <p style="margin:0 0 6px 0;color:var(--muted)">Доставляем бесплатно по Левобережному району г. Химки. Подробности и время доставки согласовываются с менеджером.</p>
             <ul style="margin:6px 0 0 18px;color:var(--muted)">
               <li>Быстрая курьерская доставка — от 1 часа</li>
@@ -232,6 +174,15 @@
           </div>
         </div>
       </section>
+
+      <!-- Popular preview -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+        <div class="section-title">Популярное</div>
+        <div style="font-size:12px;color:var(--muted)">до 10 товаров</div>
+      </div>
+      <div id="catalogPreview" class="catalog" aria-live="polite">
+        <!-- popular product cards (вставляются скриптом) -->
+      </div>
     </main>
 
     <!-- ==========================
@@ -240,9 +191,10 @@
     <section id="catalogPage" class="page" aria-live="polite">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="font-weight:800">Каталог</div>
+        <div style="color:var(--muted);font-size:13px">10 товаров максимум</div>
       </div>
-      <div id="catalogFull"
-           style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div id="catalogFull" style="margin-top:12px" class="grid">
+        <!-- full catalog (вставляется скриптом) -->
       </div>
     </section>
 
@@ -274,14 +226,28 @@
       </div>
     </section>
 
+  </div> <!-- /.app -->
+
+  <!-- bottom nav -->
+  <div class="bottom-nav" role="navigation" aria-label="Навигация">
+    <div class="nav-inner">
+      <div id="navHome" class="nav-item" aria-label="Главная">🏠 Главная</div>
+      <div id="navCatalog" class="nav-item" aria-label="Каталог">📦 Каталог</div>
+      <div id="navCart" class="nav-item" aria-label="Корзина">🛒 Корзина <span id="badge" class="nav-badge" style="display:none">0</span></div>
+    </div>
   </div>
 
 <script>
 (() => {
+  /* =========================
+     Конфигурация
+     ========================= */
   const API_PRODUCTS = "https://zelen-da-backend.onrender.com/products/";
   const API_ORDERS = "https://zelen-da-backend.onrender.com/orders/";
 
-  // Telegram init
+  /* =========================
+     Telegram WebApp init (без падения, если не в телеге)
+     ========================= */
   const tg = window.Telegram?.WebApp || null;
   let tgUser = { username: "unknown", id: null };
   let insideTelegram = false;
@@ -295,23 +261,36 @@
     }
   } catch(e){ console.warn(e) }
 
-  // State
+  /* =========================
+     State
+     ========================= */
   let products = [];
   let map = {};
   let cart = JSON.parse(localStorage.getItem('zelen_cart_v4') || '[]');
 
-  // DOM refs (safe)
-  const catalogFull = document.getElementById('catalogFull');
+  /* =========================
+     DOM Refs
+     ========================= */
+  const catalogPreview = document.getElementById('catalogPreview'); // preview on home
+  const catalogFull = document.getElementById('catalogFull');       // full catalog page
   const badge = document.getElementById('badge');
 
-  // Navigation helpers
+  const navHome = document.getElementById('navHome');
+  const navCatalog = document.getElementById('navCatalog');
+  const navCart = document.getElementById('navCart');
+
+  const btnCatalog = document.getElementById('btnCatalog');
+  const btnContact = document.getElementById('btnContact'); // may be null
+
+  /* =========================
+     Navigation helper
+     ========================= */
   function show(pageId){
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-
     const el = document.getElementById(pageId);
     if(el) el.classList.add('active');
 
-    // активное меню
+    // nav active state
     document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
     if(pageId === 'home') navHome.classList.add('active');
     if(pageId === 'catalogPage') navCatalog.classList.add('active');
@@ -319,87 +298,130 @@
 
     window.scrollTo({top:0,behavior:'smooth'});
   }
-  // bind nav
-  const navHome = document.getElementById('navHome');
-  const navCatalog = document.getElementById('navCatalog');
-  const navCart = document.getElementById('navCart');
+
   if(navHome) navHome.addEventListener('click', ()=> show('home'));
   if(navCatalog) navCatalog.addEventListener('click', ()=> show('catalogPage'));
   if(navCart) navCart.addEventListener('click', ()=> show('cartPage'));
-
-  // hero buttons
-  const btnCatalog = document.getElementById('btnCatalog');
-  const btnContact = document.getElementById('btnContact');
   if(btnCatalog) btnCatalog.addEventListener('click', ()=> show('catalogPage'));
-  if(btnContact) btnContact.addEventListener('click', ()=> window.open('https://t.me/Zakaz_Mikrozelen','_blank'));
+  if(btnContact) btnContact.addEventListener('click', ()=> { window.open('https://t.me/Zakaz_Mikrozelen','_blank'); });
 
-  // create product card
-  function productCard(p){
+  /* =========================
+     Utilities: storage + badge
+     ========================= */
+  function saveCart(){ localStorage.setItem('zelen_cart_v4', JSON.stringify(cart)); renderCart(); updateBadge(); }
+  function updateBadge(){
+    const total = cart.reduce((s,i)=> s + i.qty, 0);
+    if(badge){
+      if(total>0){ badge.style.display='inline-block'; badge.textContent = total; } else badge.style.display='none';
+    }
+  }
+
+  function showToast(text){
+    const t = document.createElement('div');
+    t.style.position='fixed';
+    t.style.left='50%';
+    t.style.transform='translateX(-50%)';
+    t.style.bottom='110px';
+    t.style.background='rgba(0,0,0,0.8)';
+    t.style.color='#fff';
+    t.style.padding='8px 12px';
+    t.style.borderRadius='12px';
+    t.style.zIndex=9999;
+    t.textContent = text;
+    document.body.appendChild(t);
+    setTimeout(()=> t.remove(),1200);
+  }
+
+  /* =========================
+     Product card builders
+     - previewCard: compact horizontal (for home)
+     - gridCard: vertical grid (for catalog page)
+     ========================= */
+  function previewCard(p){
     const wrap = document.createElement('div');
-    wrap.className='card';
+    wrap.className = 'card';
 
+    const thumbWrap = document.createElement('div');
+    thumbWrap.className = 'thumb-wrap';
     const img = document.createElement('img');
-    img.className='thumb';
-    img.src = p.image || '';
-    img.alt = p.name;
+    img.className = 'thumb';
+    img.alt = p.name || '';
+    img.src = p.image || 'https://via.placeholder.com/400?text=No+image';
+    thumbWrap.appendChild(img);
 
-    const name = document.createElement('div');
-    name.style.fontWeight='600';
-    name.style.marginTop='10px';
-    name.textContent = p.name;
+    const info = document.createElement('div');
+    info.className = 'info';
+    const name = document.createElement('div'); name.className='name'; name.textContent = p.name || '';
+    const desc = document.createElement('div'); desc.className='desc'; desc.textContent = p.description || '';
+    const row = document.createElement('div'); row.className='row';
 
-    const desc = document.createElement('div');
-    desc.style.color='var(--muted)';
-    desc.style.fontSize='13px';
-    desc.style.marginTop='4px';
-    desc.textContent = p.description || '';
+    const price = document.createElement('div'); price.className='price'; price.textContent = (p.price || 0) ? (p.price + ' ₽') : '';
+    const add = document.createElement('button'); add.className='btn btn-primary'; add.textContent='В корзину';
 
-    const price = document.createElement('div');
-    price.style.marginTop='8px';
-    price.style.fontWeight='700';
-    price.textContent = (p.price || 0) + ' ₽';
-
-    const btn = document.createElement('button');
-    btn.textContent = 'В корзину';
-    btn.style.marginTop='10px';
-    btn.style.width='100%';
-    btn.style.padding='10px';
-    btn.style.borderRadius='10px';
-    btn.style.border='none';
-    btn.style.background='var(--accent)';
-    btn.style.color='#fff';
-
-    btn.addEventListener('click', ()=> {
+    add.addEventListener('click', ()=> {
       addToCart(p.id, 1);
-      showToast('Добавлено');
+      showToast('Добавлено в корзину');
     });
 
-    wrap.appendChild(img);
-    wrap.appendChild(name);
-    wrap.appendChild(desc);
+    row.appendChild(price);
+    row.appendChild(add);
+
+    info.appendChild(name);
+    info.appendChild(desc);
+    info.appendChild(row);
+
+    wrap.appendChild(thumbWrap);
+    wrap.appendChild(info);
+    return wrap;
+  }
+
+  function gridCard(p){
+    const wrap = document.createElement('div');
+    wrap.className = 'card-grid';
+
+    // image container - use position relative trick
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'thumb-wrap'; // styles in CSS handle square ratio and overflow
+    imgWrap.style.position = 'relative';
+    const img = document.createElement('img');
+    img.className = 'thumb';
+    img.alt = p.name || '';
+    img.src = p.image || 'https://via.placeholder.com/400?text=No+image';
+    img.style.position = 'absolute';
+    img.style.top = '0';
+    img.style.left = '0';
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'cover';
+    imgWrap.appendChild(img);
+
+    const title = document.createElement('div'); title.className='name'; title.textContent = p.name || '';
+    const price = document.createElement('div'); price.className='price'; price.textContent = (p.price || 0) ? (p.price + ' ₽') : '';
+
+    const btn = document.createElement('button'); btn.className='btn btn-primary'; btn.style.width='100%'; btn.style.marginTop='8px'; btn.textContent = 'В корзину';
+    btn.addEventListener('click', ()=>{ addToCart(p.id, 1); showToast('Добавлено'); });
+
+    wrap.appendChild(imgWrap);
+    wrap.appendChild(title);
     wrap.appendChild(price);
     wrap.appendChild(btn);
 
     return wrap;
   }
 
-  // cart functions
-  function saveCart(){ localStorage.setItem('zelen_cart_v4', JSON.stringify(cart)); renderCart(); updateBadge(); }
-  function addToCart(id, qty=1){
-    qty = Math.max(1, Math.floor(qty));
-    const found = cart.find(i=>i.id===id);
-    if(found) found.qty += qty; else cart.push({id,qty});
-    saveCart();
-  }
-
+  /* =========================
+     Cart functions (render for home preview + cart page)
+     ========================= */
   function renderCart(){
-    // render area in home
-    const homeList = document.getElementById('cartList');
+    // home preview area (if exists)
+    const homePreviewList = document.getElementById('cartList'); // optional small preview, might be absent
     const homeEmpty = document.getElementById('cartEmpty');
-    if(homeList && homeEmpty){
-      homeList.innerHTML = '';
-      if(!cart.length){ homeEmpty.style.display='block'; if(document.getElementById('total')) document.getElementById('total').textContent = '0 ₽'; }
-      else{
+    if(homePreviewList && homeEmpty){
+      homePreviewList.innerHTML = '';
+      if(!cart.length){
+        homeEmpty.style.display='block';
+        if(document.getElementById('total')) document.getElementById('total').textContent = '0 ₽';
+      } else {
         homeEmpty.style.display='none';
         cart.forEach(item => {
           const p = map[item.id] || {name:'Товар', price:0, image:''};
@@ -409,29 +431,33 @@
           const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = p.name;
           const sub = document.createElement('div'); sub.style.color = 'var(--muted)'; sub.textContent = `${item.qty} × ${p.price} ₽`;
           meta.appendChild(title); meta.appendChild(sub);
+
           const actions = document.createElement('div'); actions.className='cart-actions';
           const plus = document.createElement('button'); plus.className='icon-btn'; plus.textContent='+';
           const minus = document.createElement('button'); minus.className='icon-btn'; minus.textContent='−';
           const rm = document.createElement('button'); rm.className='icon-btn'; rm.textContent='✕';
+
           plus.addEventListener('click', ()=> { item.qty++; saveCart(); });
           minus.addEventListener('click', ()=> { item.qty--; if(item.qty<=0) cart = cart.filter(x=>x.id!==item.id); saveCart(); });
           rm.addEventListener('click', ()=> { cart = cart.filter(x=>x.id!==item.id); saveCart(); });
+
           actions.appendChild(plus); actions.appendChild(minus); actions.appendChild(rm);
           el.appendChild(img); el.appendChild(meta); el.appendChild(actions);
-          homeList.appendChild(el);
+          homePreviewList.appendChild(el);
         });
-        const sum = cart.reduce((s,i)=> s + ((map[i.id]?.price||0)*i.qty), 0);
-        if(document.getElementById('total')) document.getElementById('total').textContent = sum + ' ₽';
+        if(document.getElementById('total')) document.getElementById('total').textContent = cart.reduce((s,i)=> s + ((map[i.id]?.price||0)*i.qty), 0) + ' ₽';
       }
     }
 
-    // render area on cart page
+    // cart page render
     const pageList = document.getElementById('cartListPage');
     const pageEmpty = document.getElementById('cartEmptyPage');
     if(pageList && pageEmpty){
       pageList.innerHTML = '';
-      if(!cart.length){ pageEmpty.style.display='block'; if(document.getElementById('totalPage')) document.getElementById('totalPage').textContent = '0 ₽'; }
-      else{
+      if(!cart.length){
+        pageEmpty.style.display='block';
+        if(document.getElementById('totalPage')) document.getElementById('totalPage').textContent = '0 ₽';
+      } else {
         pageEmpty.style.display='none';
         cart.forEach(item => {
           const p = map[item.id] || {name:'Товар', price:0, image:''};
@@ -441,13 +467,16 @@
           const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = p.name;
           const sub = document.createElement('div'); sub.style.color = 'var(--muted)'; sub.textContent = `${item.qty} × ${p.price} ₽`;
           meta.appendChild(title); meta.appendChild(sub);
+
           const actions = document.createElement('div'); actions.className='cart-actions';
           const plus = document.createElement('button'); plus.className='icon-btn'; plus.textContent='+';
           const minus = document.createElement('button'); minus.className='icon-btn'; minus.textContent='−';
           const rm = document.createElement('button'); rm.className='icon-btn'; rm.textContent='✕';
+
           plus.addEventListener('click', ()=> { item.qty++; saveCart(); });
           minus.addEventListener('click', ()=> { item.qty--; if(item.qty<=0) cart = cart.filter(x=>x.id!==item.id); saveCart(); });
           rm.addEventListener('click', ()=> { cart = cart.filter(x=>x.id!==item.id); saveCart(); });
+
           actions.appendChild(plus); actions.appendChild(minus); actions.appendChild(rm);
           el.appendChild(img); el.appendChild(meta); el.appendChild(actions);
           pageList.appendChild(el);
@@ -458,14 +487,19 @@
     }
   }
 
-  function updateBadge(){
-    const total = cart.reduce((s,i)=> s + i.qty, 0);
-    if(badge){
-      if(total>0){ badge.style.display='inline-block'; badge.textContent = total; } else badge.style.display='none';
-    }
+  /* =========================
+     addToCart
+     ========================= */
+  function addToCart(id, qty=1){
+    qty = Math.max(1, Math.floor(qty));
+    const found = cart.find(i=>i.id===id);
+    if(found) found.qty += qty; else cart.push({id,qty});
+    saveCart();
   }
 
-  // order
+  /* =========================
+     Order sending
+     ========================= */
   async function placeOrder(){
     const nameEl = document.getElementById('inputNamePage') || document.getElementById('inputName');
     const phoneEl = document.getElementById('inputPhonePage') || document.getElementById('inputPhone');
@@ -480,14 +514,8 @@
     const items = cart.map(i=> ({ id:i.id, qty:i.qty, name: map[i.id]?.name || null, price: map[i.id]?.price || null }) );
     const payload = { user_id: tgUser.id, username: tgUser.username, items, name, phone };
 
-    const btnHome = document.getElementById('btnOrder');
     const btnPage = document.getElementById('btnOrderPage');
-    if(btnHome) btnHome.disabled = true;
-    if(btnPage) btnPage.disabled = true;
-    const prev1 = btnHome ? btnHome.textContent : null;
-    const prev2 = btnPage ? btnPage.textContent : null;
-    if(btnHome) btnHome.textContent = 'Отправка...';
-    if(btnPage) btnPage.textContent = 'Отправка...';
+    if(btnPage) { btnPage.disabled = true; btnPage.textContent = 'Отправка...'; }
 
     try{
       const res = await fetch(API_ORDERS, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
@@ -497,7 +525,11 @@
         cart = []; saveCart();
         if(infoEl) infoEl.textContent = 'Заказ принят. Спасибо!';
         showToast('Заказ оформлен');
-        if(insideTelegram && tg) { try { tg.sendData(JSON.stringify({type:'order_placed', order_id: data.order_id || null})); } catch(e){} }
+        if(insideTelegram && tg) {
+          try {
+            tg.sendData(JSON.stringify({type:'order_placed', order_id: data.order_id || null}));
+          } catch(e){}
+        }
       } else {
         throw new Error('server');
       }
@@ -505,87 +537,79 @@
       console.error(e);
       alert('Ошибка отправки заказа — попробуйте позже');
     } finally {
-      if(btnHome){ btnHome.disabled = false; btnHome.textContent = prev1 || 'Оформить заказ'; }
-      if(btnPage){ btnPage.disabled = false; btnPage.textContent = prev2 || 'Оформить заказ'; }
+      if(btnPage){ btnPage.disabled = false; btnPage.textContent = 'Оформить заказ'; }
     }
   }
 
-  function showToast(text){
-    const t = document.createElement('div'); t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.bottom='110px'; t.style.background='rgba(0,0,0,0.8)'; t.style.color='#fff'; t.style.padding='8px 12px'; t.style.borderRadius='12px'; t.style.zIndex=9999; t.textContent = text;
-    document.body.appendChild(t); setTimeout(()=> t.remove(),1200);
-  }
+  /* =========================
+     Clear cart buttons handlers
+     ========================= */
+  const btnClearPage = document.getElementById('btnClearPage');
+  if(btnClearPage) btnClearPage.addEventListener('click', ()=> {
+    if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Корзина очищена'); }
+  });
 
-  // load products
+  /* =========================
+     Load products from backend and render
+     ========================= */
   async function load(){
-    if(catalog) catalog.innerHTML = '<div style="color:var(--muted)">Загрузка…</div>';
+    if(catalogPreview) catalogPreview.innerHTML = '<div style="color:var(--muted)">Загрузка…</div>';
     if(catalogFull) catalogFull.innerHTML = '';
+
     try{
       const r = await fetch(API_PRODUCTS);
       if(!r.ok) throw new Error('fetch');
       const data = await r.json();
-      products = data;
-      map = {}; products.forEach(p=> map[p.id]=p);
-      // full
+      products = Array.isArray(data) ? data : [];
+      map = {}; products.forEach(p=> map[p.id] = p);
+
+      // promo (first product or product with is_promo true)
+      const promo = products.find(p => p.is_promo) || products[0] || null;
+      if(promo){
+        const heroImg = document.getElementById('heroImage');
+        if(heroImg) heroImg.src = promo.image || 'https://via.placeholder.com/400?text=Акция';
+        const heroTitle = document.getElementById('heroTitle');
+        if(heroTitle) heroTitle.textContent = promo.name || '';
+        const heroDesc = document.getElementById('heroDesc');
+        if(heroDesc) heroDesc.textContent = (promo.description || '') + (promo.price ? ` • ${promo.price} ₽` : '');
+      }
+
+      // preview (first 4)
+      if(catalogPreview){
+        catalogPreview.innerHTML = '';
+        products.slice(0,4).forEach(p=> catalogPreview.appendChild(previewCard(p)));
+      }
+
+      // full grid
       if(catalogFull){
         catalogFull.innerHTML = '';
-        products.forEach(p=> catalogFull.appendChild(productCard(p)));
+        products.forEach(p=> catalogFull.appendChild(gridCard(p)));
       }
-      // hero image
-      if (products.length > 0) {
-        const promo = products[0];
 
-        // картинка
-        const heroImg = document.getElementById('heroImage');
-        if (heroImg) heroImg.src = promo.image || 'https://via.placeholder.com/300x200';
-
-        // название
-        const heroTitle = document.getElementById('heroTitle');
-        if (heroTitle) heroTitle.textContent = promo.name;
-
-        // описание
-        const heroDesc = document.getElementById('heroDesc');
-        if (heroDesc) {
-          heroDesc.textContent =
-            (promo.description || '') +
-            (promo.price ? ` • ${promo.price} ₽` : '');
-        }
-      }
-    }catch(e){
-      if(catalog) catalog.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
+    } catch(e){
       console.error(e);
+      if(catalogPreview) catalogPreview.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
+      if(catalogFull) catalogFull.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
     }
+
     renderCart();
     updateBadge();
   }
 
-  // wire UI safe
-  const btnOrderHome = document.getElementById('btnOrder');
-  if(btnOrderHome) btnOrderHome.addEventListener('click', placeOrder);
-  const btnClearHome = document.getElementById('btnClear');
-  if(btnClearHome) btnClearHome.addEventListener('click', ()=> { if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Корзина очищена'); }});
+  // expose helper for debug
+  window.zelen = { cart, products, map, addToCart, saveCart };
 
+  /* =========================
+     Startup
+     ========================= */
+  load();
+
+  // attach order handler
   const btnOrderPage = document.getElementById('btnOrderPage');
   if(btnOrderPage) btnOrderPage.addEventListener('click', placeOrder);
-  const btnClearPage = document.getElementById('btnClearPage');
-  if(btnClearPage) btnClearPage.addEventListener('click', ()=> { if(confirm('Очистить корзину?')){ cart=[]; saveCart(); showToast('Корзина очищена'); }});
 
-  // startup
-  load();
-  renderCart();
-  updateBadge();
-
-  // expose for debugging
-  window.zelen = { cart, products, map, addToCart };
 })();
 </script>
 
-  <!-- bottom nav -->
-  <div class="bottom-nav" role="navigation" aria-label="Навигация">
-    <div class="nav-inner">
-      <div id="navHome" class="nav-item" aria-label="Главная">🏠 Главная</div>
-      <div id="navCatalog" class="nav-item" aria-label="Каталог">📦 Каталог</div>
-      <div id="navCart" class="nav-item" aria-label="Корзина">🛒 Корзина <span id="badge" class="nav-badge" style="display:none">0</span></div>
-    </div>
-  </div>
 </body>
 </html>
