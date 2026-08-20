@@ -116,8 +116,8 @@
       <section class="hero" aria-label="Акция">
         <img id="heroImage" class="hero-img" src="https://via.placeholder.com/300x200?text=%D0%90%D0%BA%D1%86%D0%B8%D1%8F" alt="Акция">
         <div class="hero-info">
-          <h2>Набор «Свежие листья» — скидка 10%</h2>
-          <p>Пробник 50–80 г • Бесплатная доставка по Левобережному району</p>
+          <h2 id="heroTitle">Загрузка...</h2>
+          <p id="heroDesc"></p>
           <div class="hero-actions">
             <button id="btnCatalog" class="btn btn-primary" aria-label="Открыть каталог">Смотреть каталог</button>
             <button id="btnContact" class="btn btn-ghost" aria-label="Связаться">Связаться</button>
@@ -434,9 +434,24 @@
         products.forEach(p=> catalogFull.appendChild(productCard(p)));
       }
       // hero image
-      if(products[0] && products[0].image){
-        const hero = document.getElementById('heroImage');
-        if(hero) hero.src = products[0].image;
+      if (products.length > 0) {
+        const promo = products[0];
+
+        // картинка
+        const heroImg = document.getElementById('heroImage');
+        if (heroImg) heroImg.src = promo.image || 'https://via.placeholder.com/300x200';
+
+        // название
+        const heroTitle = document.getElementById('heroTitle');
+        if (heroTitle) heroTitle.textContent = promo.name;
+
+        // описание
+        const heroDesc = document.getElementById('heroDesc');
+        if (heroDesc) {
+          heroDesc.textContent =
+            (promo.description || '') +
+            (promo.price ? ` • ${promo.price} ₽` : '');
+        }
       }
     }catch(e){
       if(catalog) catalog.innerHTML = '<div style="color:var(--muted)">Не удалось загрузить товары</div>';
