@@ -33,7 +33,7 @@
       margin:0;
       padding:0;
       background:var(--bg);
-      font-family:"Inter", system-ui;
+      font-family: 'Inter', sans-serif;
     }
 
     body{
@@ -79,13 +79,16 @@
       position: fixed;
       bottom: 0;
       left: 0;
-      width: 100%;
+      right: 0;
 
       display: flex;
-      justify-content: center;
+      justify-content: space-around;
 
-      background: transparent;
-      z-index: 100;
+      background: #fff;
+      padding: 10px;
+      border-top: 1px solid #eee;
+
+      z-index: 1000;
     }
 
     .nav-inner{
@@ -271,15 +274,6 @@
       </div>
     </section>
 
-  </div>
-
-  <!-- bottom nav -->
-  <div class="bottom-nav" role="navigation" aria-label="Навигация">
-    <div class="nav-inner">
-      <div id="navHome" class="nav-item" aria-label="Главная">🏠 Главная</div>
-      <div id="navCatalog" class="nav-item" aria-label="Каталог">📦 Каталог</div>
-      <div id="navCart" class="nav-item" aria-label="Корзина">🛒 Корзина <span id="badge" class="nav-badge" style="display:none">0</span></div>
-    </div>
   </div>
 
 <script>
@@ -584,5 +578,14 @@
   window.zelen = { cart, products, map, addToCart };
 })();
 </script>
+
+  <!-- bottom nav -->
+  <div class="bottom-nav" role="navigation" aria-label="Навигация">
+    <div class="nav-inner">
+      <div id="navHome" class="nav-item" aria-label="Главная">🏠 Главная</div>
+      <div id="navCatalog" class="nav-item" aria-label="Каталог">📦 Каталог</div>
+      <div id="navCart" class="nav-item" aria-label="Корзина">🛒 Корзина <span id="badge" class="nav-badge" style="display:none">0</span></div>
+    </div>
+  </div>
 </body>
 </html>
