@@ -29,7 +29,12 @@
     * { box-sizing: border-box; }
     html, body { height:100%; margin:0; padding:0; background:var(--bg); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
     body { font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif; color:var(--text); display:flex; justify-content:center; }
-    .app { width:100%; max-width:var(--max-width); padding:12px 12px 20px; padding-bottom: calc(var(--nav-height) + 40px); }
+    .app {
+      width:100%;
+      max-width:var(--max-width);
+      padding:12px 12px 20px;
+      padding-bottom: calc(var(--nav-height) + 80px + env(safe-area-inset-bottom));
+    }
 
     /* header */
     .header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
@@ -39,8 +44,14 @@
     .subtitle { font-size:12px; color:var(--muted); margin-top:2px; }
 
     /* pages */
-    .page { display:none; }
-    .page.active { display:block; }
+    .page {
+      display:none;
+      width:100%;
+    }
+
+    .page.active {
+      display:block;
+    }
 
     /* hero */
     .card { background:var(--surface); border-radius:14px; padding:12px; box-shadow:var(--soft-shadow); display:flex; gap:12px; align-items:flex-start; border:1px solid rgba(0,0,0,0.02); }
@@ -87,7 +98,18 @@
     .input { width:100%; padding:10px; border-radius:10px; border:1px solid #e9e9e8; margin-top:10px; font-size:14px; }
 
     /* bottom nav - fixed and centered */
-    .bottom-nav { position:fixed; left:0; right:0; bottom:0px; display:flex; justify-content:center; pointer-events:none; width:100%; z-index:9999; }
+    .bottom-nav {
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      padding-bottom: env(safe-area-inset-bottom);
+      display:flex;
+      justify-content:center;
+      pointer-events:none;
+      width:100%;
+      z-index:9999;
+    }
     .nav-inner { width:100%; max-width:var(--max-width); display:flex; gap:10px; padding:6px; box-sizing:border-box; pointer-events:auto; justify-content:space-between; }
     .nav-item { flex:1; background:linear-gradient(180deg,#ffffff,#f7fff8); border-radius:14px; padding:10px 8px; display:flex; justify-content:center; align-items:center; gap:8px; cursor:pointer; border:1px solid rgba(0,0,0,0.03); font-weight:700; font-size:14px; text-align:center; }
     .nav-item.active { color:var(--accent); box-shadow:0 6px 18px rgba(31,122,43,0.08); transform:translateY(-2px); }
@@ -191,10 +213,11 @@
         <div style="font-weight:800">Каталог</div>
         <div style="color:var(--muted);font-size:13px">10 товаров максимум</div>
       </div>
+
       <div id="catalogFull" style="margin-top:12px" class="grid">
-    </section>
         <!-- full catalog (вставляется скриптом) -->
       </div>
+    </section>
 
     <!-- ==========================
          3) CART (корзина + оформление)
@@ -216,9 +239,9 @@
           <input id="inputPhonePage" class="input" type="tel" placeholder="Телефон (+7...)">
         </div>
 
-        <div style="display:flex;gap:8px;margin-top:12px">
+        <div style="display:flex;gap:8px;margin-top:12px;align-items:stretch;">
           <button id="btnOrderPage" class="btn btn-primary" style="flex:1">Оформить заказ</button>
-          <button id="btnClearPage" class="btn btn-ghost">Очистить</button>
+          <button id="btnClearPage" class="btn btn-ghost" style="white-space:nowrap">
         </div>
         <div id="orderInfoPage" style="margin-top:8px;color:var(--muted);font-size:13px"></div>
       </div>
