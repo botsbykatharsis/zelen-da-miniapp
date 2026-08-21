@@ -93,6 +93,71 @@
     .card-grid .thumb-wrap { width:100%; padding-bottom:100%; position:relative; border-radius:12px; overflow:hidden; }
     .card-grid .thumb { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
 
+    /* product page */
+    .product-detail {
+      background: var(--surface);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--soft-shadow);
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+
+    .product-detail-image-wrap {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      background: #f3f4f2;
+    }
+
+    .product-detail-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .product-detail-content {
+      padding: 16px;
+    }
+
+    .product-detail-name {
+      font-size: 20px;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .product-detail-description {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .product-detail-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .product-detail-price {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .product-detail-qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty {
+      min-width: 34px;
+      text-align: center;
+      font-weight: 700;
+    }
+
     /* cart */
     .cart-panel { background:var(--surface); border-radius:12px; padding:12px; box-shadow:var(--soft-shadow); margin-top:12px; }
     .cart-empty { color:var(--muted); padding:18px; text-align:center; }
@@ -211,6 +276,71 @@
     </section>
 
     <!-- ==========================
+     PRODUCT (страница товара)
+     ========================== -->
+    <section id="productPage" class="page" aria-live="polite">
+
+      <button id="btnProductBack" class="btn btn-ghost" style="margin-bottom:12px">
+        ← Назад в каталог
+      </button>
+
+      <div class="product-detail">
+
+        <div class="product-detail-image-wrap">
+          <img
+            id="productDetailImage"
+            class="product-detail-image"
+            src=""
+            alt=""
+          >
+        </div>
+
+        <div class="product-detail-content">
+
+          <div
+            id="productDetailName"
+            class="product-detail-name"
+          ></div>
+
+          <div
+            id="productDetailDescription"
+            class="product-detail-description"
+          ></div>
+
+          <div class="product-detail-bottom">
+
+            <div
+              id="productDetailPrice"
+              class="product-detail-price"
+            ></div>
+
+            <div class="product-detail-qty">
+              <button id="productDetailMinus" class="icon-btn">−</button>
+
+              <div id="productDetailQty" class="qty">
+                1
+              </div>
+
+              <button id="productDetailPlus" class="icon-btn">+</button>
+            </div>
+
+          </div>
+
+          <button
+            id="productDetailAdd"
+            class="btn btn-primary"
+            style="width:100%;margin-top:16px"
+          >
+            Добавить в корзину
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ==========================
          3) CART (корзина + оформление)
          ========================== -->
     <section id="cartPage" class="page" aria-live="polite">
@@ -274,6 +404,8 @@
   let products = [];
   let map = {};
   let cart = JSON.parse(localStorage.getItem('zelen_cart_v4') || '[]');
+  let selectedProduct = null;
+  let selectedProductQty = 1;
 
   // === DOM refs ===
   const catalogPreview = document.getElementById('catalogPreview');
@@ -286,6 +418,18 @@
 
   const btnCatalog = document.getElementById('btnCatalog');
   const btnContact = document.getElementById('btnContact');
+
+  const btnProductBack = document.getElementById('btnProductBack');
+
+  const productDetailImage = document.getElementById('productDetailImage');
+  const productDetailName = document.getElementById('productDetailName');
+  const productDetailDescription = document.getElementById('productDetailDescription');
+  const productDetailPrice = document.getElementById('productDetailPrice');
+
+  const productDetailMinus = document.getElementById('productDetailMinus');
+  const productDetailPlus = document.getElementById('productDetailPlus');
+  const productDetailQty = document.getElementById('productDetailQty');
+  const productDetailAdd = document.getElementById('productDetailAdd');
 
   // === Navigation ===
   function show(pageId){
@@ -302,11 +446,76 @@
     window.scrollTo({top:0, behavior:'smooth'});
   }
 
+  function openProduct(productId) {
+    const product = map[productId];
+
+    if (!product) {
+      return;
+    }
+
+    selectedProduct = product;
+
+    const cartItem = cart.find(
+      item => item.id === product.id
+    );
+
+    selectedProductQty = cartItem
+      ? cartItem.qty
+      : 1;
+
+    productDetailImage.src =
+      product.image ||
+      'https://via.placeholder.com/400?text=No+image';
+
+    productDetailImage.alt =
+      product.name || '';
+
+    productDetailName.textContent =
+      product.name || '';
+
+    productDetailDescription.textContent =
+      product.description || '';
+
+    productDetailPrice.textContent =
+      product.price
+        ? `${product.price} ₽`
+        : '';
+
+    productDetailQty.textContent =
+      selectedProductQty;
+
+    show('productPage');
+  }
+
   navHome?.addEventListener('click', () => show('home'));
   navCatalog?.addEventListener('click', () => show('catalogPage'));
   navCart?.addEventListener('click', () => show('cartPage'));
   btnCatalog?.addEventListener('click', () => show('catalogPage'));
   btnContact?.addEventListener('click', () => { window.open('https://t.me/Zakaz_Mikrozelen','_blank'); });
+  productDetailMinus?.addEventListener('click', () => {
+    if (selectedProductQty > 1) {
+      selectedProductQty--;
+      productDetailQty.textContent = selectedProductQty;
+    }
+  });
+
+  productDetailPlus?.addEventListener('click', () => {
+    selectedProductQty++;
+    productDetailQty.textContent = selectedProductQty;
+  });
+
+  productDetailAdd?.addEventListener('click', () => {
+    if (!selectedProduct) {
+      return;
+    }
+
+    setCartQuantity(
+      selectedProduct.id,
+      selectedProductQty
+    );
+
+    showToast('Корзина обновлена');
+  });
 
   // === Utilities ===
   function saveCart(){
@@ -490,6 +699,23 @@
     const found = cart.find(i => i.id === id);
     if (found) found.qty += qty;
     else cart.push({ id, qty });
+    saveCart();
+  }
+
+  function setCartQuantity(id, qty) {
+    qty = Math.max(1, Math.floor(qty));
+
+    const found = cart.find(item => item.id === id);
+
+    if (found) {
+      found.qty = qty;
+    } else {
+      cart.push({
+        id: id,
+        qty: qty
+      });
+    }
+
     saveCart();
   }
 
