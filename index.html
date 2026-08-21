@@ -439,9 +439,20 @@
 
     // nav active state
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    if (pageId === 'home') navHome?.classList.add('active');
-    if (pageId === 'catalogPage') navCatalog?.classList.add('active');
-    if (pageId === 'cartPage') navCart?.classList.add('active');
+    if (pageId === 'home') {
+      navHome?.classList.add('active');
+    }
+
+    if (
+      pageId === 'catalogPage' ||
+      pageId === 'productPage'
+    ) {
+      navCatalog?.classList.add('active');
+    }
+
+    if (pageId === 'cartPage') {
+      navCart?.classList.add('active');
+    }
 
     window.scrollTo({top:0, behavior:'smooth'});
   }
@@ -492,6 +503,8 @@
   navCart?.addEventListener('click', () => show('cartPage'));
   btnCatalog?.addEventListener('click', () => show('catalogPage'));
   btnContact?.addEventListener('click', () => { window.open('https://t.me/Zakaz_Mikrozelen','_blank'); });
+  btnProductBack?.addEventListener('click', () => {  show('catalogPage'); });
+
   productDetailMinus?.addEventListener('click', () => {
     if (selectedProductQty > 1) {
       selectedProductQty--;
@@ -586,10 +599,12 @@
   function gridCard(p){
     const wrap = document.createElement('div');
     wrap.className = 'card-grid';
+    wrap.style.cursor = 'pointer';
 
     const imgWrap = document.createElement('div');
     imgWrap.className = 'thumb-wrap';
     imgWrap.style.position = 'relative';
+
     const img = document.createElement('img');
     img.className = 'thumb';
     img.alt = p.name || '';
@@ -600,13 +615,37 @@
     img.style.width = '100%';
     img.style.height = '100%';
     img.style.objectFit = 'cover';
+
     imgWrap.appendChild(img);
 
-    const title = document.createElement('div'); title.className = 'name'; title.textContent = p.name || '';
-    const price = document.createElement('div'); price.className = 'price'; price.textContent = (p.price || 0) ? (p.price + ' ₽') : '';
+    const title = document.createElement('div');
+    title.className = 'name';
+    title.textContent = p.name || '';
 
-    const btn = document.createElement('button'); btn.className = 'btn btn-primary'; btn.style.width = '100%'; btn.style.marginTop = '8px'; btn.textContent = 'В корзину';
-    btn.addEventListener('click', () => { addToCart(p.id, 1); showToast('Добавлено'); });
+    const price = document.createElement('div');
+    price.className = 'price';
+    price.textContent = (p.price || 0)
+      ? (p.price + ' ₽')
+      : '';
+
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-primary';
+    btn.style.width = '100%';
+    btn.style.marginTop = '8px';
+    btn.textContent = 'В корзину';
+
+    // Кнопка добавляет товар, но НЕ открывает карточку
+    btn.addEventListener('click', (event) => {
+      event.stopPropagation();
+
+      addToCart(p.id, 1);
+      showToast('Добавлено');
+    });
+
+    // Клик по самой карточке открывает страницу товара
+    wrap.addEventListener('click', () => {
+      openProduct(p.id);
+    });
 
     wrap.appendChild(imgWrap);
     wrap.appendChild(title);
